@@ -21,6 +21,204 @@ h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
 .orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
 .orb1{top:-15%;left:-8%;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%)}
 .orb2{bottom:-15%;right:-8%;width:500px;height:500px;background:radial-gradient(circle,rgba(139,92,246,.09) 0%,transparent 70%)}
+/* LOGIN PAGE — IMMERSIVE GAMER */
+#login-page{
+  align-items:stretch;justify-content:stretch;position:relative;overflow:hidden;
+  background:#000;min-height:100vh;display:none;
+}
+#login-page.active{display:flex}
+
+/* Full background grid */
+#login-page::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(0,255,128,.02) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,128,.02) 1px,transparent 1px);
+  background-size:44px 44px;animation:inputGridScroll 12s linear infinite;
+}
+/* Scanlines */
+#login-page::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);
+}
+
+/* LEFT PANEL — branding + stats */
+.login-left{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:60px 48px;position:relative;z-index:2;
+  border-right:1px solid rgba(0,255,128,.08);
+}
+@media(max-width:768px){.login-left{display:none}}
+
+/* Animated corner brackets on left panel */
+.login-left::before{
+  content:'';position:absolute;top:24px;left:24px;width:40px;height:40px;
+  border-top:2px solid rgba(0,255,128,.4);border-left:2px solid rgba(0,255,128,.4);
+}
+.login-left::after{
+  content:'';position:absolute;bottom:24px;right:24px;width:40px;height:40px;
+  border-bottom:2px solid rgba(0,255,128,.4);border-right:2px solid rgba(0,255,128,.4);
+}
+
+.login-brand{margin-bottom:48px}
+.login-brand-title{
+  font-family:'Orbitron',sans-serif;font-size:3.2rem;font-weight:900;
+  color:#00ff80;text-transform:uppercase;letter-spacing:.1em;line-height:1;
+  text-shadow:0 0 40px rgba(0,255,128,.5),0 0 80px rgba(0,255,128,.2);
+}
+.login-brand-sub{
+  font-family:'Share Tech Mono',monospace;font-size:.78rem;
+  color:rgba(0,255,128,.45);letter-spacing:.1em;margin-top:8px;
+}
+
+/* Typewriter terminal */
+.login-terminal{
+  background:rgba(0,15,8,.8);border:1px solid rgba(0,255,128,.15);
+  border-radius:4px;padding:20px;margin-bottom:36px;
+  font-family:'Share Tech Mono',monospace;font-size:.78rem;
+  color:rgba(0,255,128,.7);line-height:1.8;
+}
+.login-terminal-hdr{
+  display:flex;align-items:center;gap:8px;margin-bottom:12px;
+  padding-bottom:10px;border-bottom:1px solid rgba(0,255,128,.1);
+}
+.t-dot{width:8px;height:8px;border-radius:50%}
+.t-red{background:#f43f5e}.t-yellow{background:#f59e0b}.t-green{background:#00ff80}
+.terminal-line{color:rgba(0,255,128,.5)}
+.terminal-line span{color:#00ff80}
+#typewriter-text{color:#00c8ff}
+.cursor-blink{animation:cursorBlink .7s step-end infinite;color:#00ff80}
+
+/* Stats row */
+.login-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.login-stat{
+  background:rgba(0,255,128,.04);border:1px solid rgba(0,255,128,.12);
+  border-radius:4px;padding:14px;text-align:center;position:relative;overflow:hidden;
+}
+.login-stat::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,#00ff80,transparent);
+}
+.login-stat-val{
+  font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:700;
+  color:#00ff80;text-shadow:0 0 12px rgba(0,255,128,.4);
+}
+.login-stat-lbl{
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  color:rgba(0,255,128,.4);text-transform:uppercase;letter-spacing:.08em;margin-top:4px;
+}
+
+/* Feature list */
+.login-features{margin-top:36px;display:flex;flex-direction:column;gap:10px}
+.login-feature{
+  display:flex;align-items:center;gap:12px;
+  font-family:'Share Tech Mono',monospace;font-size:.75rem;color:rgba(0,255,128,.6);
+}
+.login-feature-icon{
+  width:28px;height:28px;border:1px solid rgba(0,255,128,.2);border-radius:3px;
+  display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;
+  background:rgba(0,255,128,.05);
+}
+
+/* RIGHT PANEL — form */
+.login-right{
+  width:420px;flex-shrink:0;display:flex;flex-direction:column;
+  justify-content:center;padding:48px 40px;position:relative;z-index:2;
+  background:rgba(0,8,4,.6);
+}
+@media(max-width:768px){.login-right{width:100%;padding:32px 24px}}
+
+.login-right-title{
+  font-family:'Orbitron',sans-serif;font-size:1.1rem;font-weight:700;
+  color:#00ff80;text-transform:uppercase;letter-spacing:.08em;
+  margin-bottom:6px;text-shadow:0 0 16px rgba(0,255,128,.3);
+}
+.login-right-sub{
+  font-family:'Share Tech Mono',monospace;font-size:.7rem;
+  color:rgba(0,255,128,.35);letter-spacing:.06em;margin-bottom:28px;
+}
+
+.login-tabs{
+  display:flex;gap:0;margin-bottom:24px;
+  border:1px solid rgba(0,255,128,.2);border-radius:3px;overflow:hidden;
+}
+.login-tab{
+  flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.06em;cursor:pointer;
+  background:transparent;border:none;color:rgba(0,255,128,.35);transition:all .2s;
+}
+.login-tab.active{background:rgba(0,255,128,.1);color:#00ff80;box-shadow:inset 0 -2px 0 #00ff80}
+
+.login-field{margin-bottom:16px}
+.login-field label{
+  display:flex;align-items:center;gap:6px;
+  font-family:'Share Tech Mono',monospace;font-size:.67rem;
+  color:rgba(0,255,128,.45);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px;
+}
+.field-icon{font-size:11px;opacity:.6}
+.login-field input{
+  width:100%;background:rgba(0,20,10,.9);border:1px solid rgba(0,255,128,.18);
+  border-radius:3px;padding:12px 14px;color:#00ff80;font-size:.88rem;
+  outline:none;font-family:'Share Tech Mono',monospace;transition:all .25s;
+  caret-color:#00ff80;
+}
+.login-field input::placeholder{color:rgba(0,255,128,.18)}
+.login-field input:focus{
+  border-color:#00ff80;
+  box-shadow:0 0 0 2px rgba(0,255,128,.08),0 0 16px rgba(0,255,128,.06);
+}
+
+/* Password strength bar */
+.pwd-strength{height:2px;background:rgba(0,255,128,.08);border-radius:1px;margin-top:6px;overflow:hidden}
+.pwd-strength-fill{height:100%;width:0;border-radius:1px;transition:width .3s,background .3s}
+
+.login-error{
+  font-family:'Share Tech Mono',monospace;font-size:.7rem;color:#f43f5e;
+  margin-bottom:14px;padding:9px 12px;background:rgba(244,63,94,.07);
+  border:1px solid rgba(244,63,94,.2);border-radius:3px;display:none;
+  animation:fadeIn .3s ease;
+}
+
+.login-btn{
+  width:100%;background:transparent;border:2px solid #00ff80;border-radius:3px;
+  padding:14px;font-family:'Orbitron',sans-serif;font-size:.82rem;font-weight:700;
+  color:#00ff80;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;
+  transition:all .25s;position:relative;overflow:hidden;margin-bottom:12px;
+}
+.login-btn::after{
+  content:'';position:absolute;top:50%;left:50%;width:0;height:0;
+  background:rgba(0,255,128,.15);border-radius:50%;transform:translate(-50%,-50%);
+  transition:width .4s,height .4s;
+}
+.login-btn:hover::after{width:300px;height:300px}
+.login-btn:hover{
+  background:rgba(0,255,128,.06);color:#fff;
+  box-shadow:0 0 30px rgba(0,255,128,.35),0 0 60px rgba(0,255,128,.1);
+}
+.login-btn:not(:disabled){animation:radarPing 2.5s ease-out infinite}
+.login-btn:disabled{opacity:.35;cursor:not-allowed;animation:none}
+
+.login-divider{
+  display:flex;align-items:center;gap:10px;margin:4px 0 12px;
+}
+.login-divider-line{flex:1;height:1px;background:rgba(0,255,128,.1)}
+.login-divider-text{
+  font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  color:rgba(0,255,128,.2);letter-spacing:.08em;white-space:nowrap;
+}
+
+.login-guest{
+  width:100%;background:transparent;border:1px solid rgba(0,255,128,.12);border-radius:3px;
+  padding:11px;font-family:'Share Tech Mono',monospace;font-size:.72rem;
+  color:rgba(0,255,128,.4);cursor:pointer;text-transform:uppercase;letter-spacing:.06em;
+  transition:all .2s;
+}
+.login-guest:hover{border-color:rgba(0,255,128,.3);color:rgba(0,255,128,.8);background:rgba(0,255,128,.04)}
+
+.login-footer{
+  margin-top:20px;font-family:'Share Tech Mono',monospace;font-size:.62rem;
+  color:rgba(0,255,128,.18);letter-spacing:.06em;text-align:center;line-height:1.8;
+}
+
 /* HERO — GAMER THEME */
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
 
@@ -464,8 +662,104 @@ textarea:focus{border-color:#00ff80;box-shadow:0 0 0 2px rgba(0,255,128,.1),0 0 
 </head>
 <body>
 
+<!-- LOGIN PAGE -->
+<div class="page active" id="login-page">
+
+  <!-- Left panel — branding -->
+  <div class="login-left">
+    <div class="login-brand">
+      <div class="login-brand-title">LifeOS</div>
+      <div class="login-brand-sub">// DECISION INTELLIGENCE SYSTEM v2.0</div>
+    </div>
+
+    <!-- Animated terminal -->
+    <div class="login-terminal">
+      <div class="login-terminal-hdr">
+        <div class="t-dot t-red"></div>
+        <div class="t-dot t-yellow"></div>
+        <div class="t-dot t-green"></div>
+        <span style="font-size:.65rem;color:rgba(0,255,128,.3);margin-left:6px">lifeos@system:~</span>
+      </div>
+      <div class="terminal-line">&gt; <span>initializing agents...</span></div>
+      <div class="terminal-line">&gt; <span>logic_agent</span> [READY]</div>
+      <div class="terminal-line">&gt; <span>finance_agent</span> [READY]</div>
+      <div class="terminal-line">&gt; <span>emotion_agent</span> [READY]</div>
+      <div class="terminal-line">&gt; <span>risk_agent</span> [READY]</div>
+      <div class="terminal-line">&gt; <span id="typewriter-text"></span><span class="cursor-blink">_</span></div>
+    </div>
+
+    <!-- Stats -->
+    <div class="login-stats">
+      <div class="login-stat">
+        <div class="login-stat-val" id="stat-decisions">0</div>
+        <div class="login-stat-lbl">Decisions</div>
+      </div>
+      <div class="login-stat">
+        <div class="login-stat-val">4</div>
+        <div class="login-stat-lbl">AI Agents</div>
+      </div>
+      <div class="login-stat">
+        <div class="login-stat-val">3yr</div>
+        <div class="login-stat-lbl">Simulation</div>
+      </div>
+    </div>
+
+    <!-- Features -->
+    <div class="login-features">
+      <div class="login-feature"><div class="login-feature-icon">🧠</div>Multi-agent parallel debate</div>
+      <div class="login-feature"><div class="login-feature-icon">🔮</div>3-year outcome simulation</div>
+      <div class="login-feature"><div class="login-feature-icon">📊</div>Confidence + risk scoring</div>
+      <div class="login-feature"><div class="login-feature-icon">📋</div>Actionable 3-week plan</div>
+    </div>
+  </div>
+
+  <!-- Right panel — form -->
+  <div class="login-right">
+    <div class="login-right-title">&gt; INITIALIZE SESSION</div>
+    <div class="login-right-sub">// AUTHENTICATE TO ACCESS DECISION CORE</div>
+
+    <div class="login-tabs">
+      <button class="login-tab active" id="tab-login" onclick="switchTab('login')">[ LOGIN ]</button>
+      <button class="login-tab" id="tab-signup" onclick="switchTab('signup')">[ SIGN UP ]</button>
+    </div>
+
+    <div id="login-error" class="login-error"></div>
+
+    <div class="login-field">
+      <label><span class="field-icon">◈</span> Username</label>
+      <input type="text" id="login-username" placeholder="enter_username" autocomplete="username" onkeydown="if(event.key==='Enter')submitAuth()"/>
+    </div>
+    <div class="login-field">
+      <label><span class="field-icon">◉</span> Password</label>
+      <input type="password" id="login-password" placeholder="••••••••" autocomplete="current-password"
+        oninput="updatePwdStrength(this.value)"
+        onkeydown="if(event.key==='Enter')submitAuth()"/>
+      <div class="pwd-strength"><div class="pwd-strength-fill" id="pwd-bar"></div></div>
+    </div>
+    <div class="login-field" id="signup-email-field" style="display:none">
+      <label><span class="field-icon">◎</span> Email <span style="opacity:.4">(optional)</span></label>
+      <input type="email" id="login-email" placeholder="user@domain.com" onkeydown="if(event.key==='Enter')submitAuth()"/>
+    </div>
+
+    <button class="login-btn" onclick="submitAuth()" id="auth-btn" data-mode="login">▶ &nbsp;LOGIN</button>
+
+    <div class="login-divider">
+      <div class="login-divider-line"></div>
+      <div class="login-divider-text">OR</div>
+      <div class="login-divider-line"></div>
+    </div>
+
+    <button class="login-guest" onclick="guestLogin()">▷ &nbsp;CONTINUE AS GUEST EXPLORER</button>
+
+    <div class="login-footer">
+      // DATA STORED LOCALLY IN BROWSER<br>
+      // NO SERVER · NO TRACKING · NO ADS
+    </div>
+  </div>
+</div>
+
 <!-- HERO — GAMER THEME -->
-<div class="page active" id="hero">
+<div class="page" id="hero">
   <div class="orb orb1"></div><div class="orb orb2"></div>
 
   <!-- HUD corner brackets -->
@@ -626,8 +920,10 @@ textarea:focus{border-color:#00ff80;box-shadow:0 0 0 2px rgba(0,255,128,.1),0 0 
         <span class="nav-decision" id="nav-decision"></span>
       </div>
       <div class="nav-actions">
+        <span id="nav-username" style="font-size:.75rem;color:rgba(0,255,128,.5);font-family:'Share Tech Mono',monospace;align-self:center;padding:0 4px"></span>
         <button class="icon-btn" onclick="exportPlan()">⬇ Export</button>
         <button class="icon-btn" onclick="showPage('input-page')">↺ New Decision</button>
+        <button class="icon-btn" onclick="logout()" style="color:#f43f5e;border-color:rgba(244,63,94,.2)">⏻ Logout</button>
       </div>
     </div>
     <div class="emotion-strip" id="emotion-strip">
@@ -647,6 +943,137 @@ textarea:focus{border-color:#00ff80;box-shadow:0 0 0 2px rgba(0,255,128,.1),0 0 
 
 <script>
 let lastResult = null;
+
+/* ══ AUTH ══ */
+let currentUser = null;
+
+function initAuth() {
+  const saved = localStorage.getItem('lifeos_user');
+  if (saved) {
+    currentUser = JSON.parse(saved);
+    showPage('hero');
+  }
+  // else login-page is already active
+  startLoginAnimations();
+}
+
+function startLoginAnimations() {
+  // Typewriter effect
+  const lines = [
+    'system_ready',
+    'awaiting_authentication...',
+    'all_agents_standby',
+    'decision_core_online',
+  ];
+  let li = 0, ci = 0;
+  const el = document.getElementById('typewriter-text');
+  if (!el) return;
+  function type() {
+    if (!document.getElementById('typewriter-text')) return;
+    if (ci < lines[li].length) {
+      el.textContent += lines[li][ci++];
+      setTimeout(type, 60 + Math.random() * 40);
+    } else {
+      setTimeout(() => {
+        el.textContent = '';
+        ci = 0;
+        li = (li + 1) % lines.length;
+        setTimeout(type, 300);
+      }, 2000);
+    }
+  }
+  type();
+
+  // Animate decision counter
+  const users = JSON.parse(localStorage.getItem('lifeos_users') || '{}');
+  const count = Object.keys(users).length * 7 + 42;
+  const statEl = document.getElementById('stat-decisions');
+  if (statEl) {
+    let n = 0;
+    const step = Math.ceil(count / 30);
+    const timer = setInterval(() => {
+      n = Math.min(n + step, count);
+      statEl.textContent = n;
+      if (n >= count) clearInterval(timer);
+    }, 40);
+  }
+}
+
+function updatePwdStrength(val) {
+  const bar = document.getElementById('pwd-bar');
+  if (!bar) return;
+  let strength = 0;
+  if (val.length >= 4) strength = 25;
+  if (val.length >= 8) strength = 50;
+  if (/[A-Z]/.test(val) && /[0-9]/.test(val)) strength = 75;
+  if (val.length >= 10 && /[^A-Za-z0-9]/.test(val)) strength = 100;
+  const colors = { 25:'#f43f5e', 50:'#f59e0b', 75:'#06b6d4', 100:'#00ff80' };
+  bar.style.width = strength + '%';
+  bar.style.background = colors[strength] || '#f43f5e';
+}
+
+function switchTab(tab) {
+  document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+  document.getElementById('tab-signup').classList.toggle('active', tab === 'signup');
+  document.getElementById('signup-email-field').style.display = tab === 'signup' ? 'block' : 'none';
+  document.getElementById('auth-btn').textContent = tab === 'signup' ? '▶  CREATE ACCOUNT' : '▶  LOGIN';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('auth-btn').dataset.mode = tab;
+}
+
+function submitAuth() {
+  const mode = document.getElementById('auth-btn').dataset.mode || 'login';
+  const username = document.getElementById('login-username').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-error');
+
+  if (!username || !password) {
+    errEl.textContent = '// ERROR: Username and password required.';
+    errEl.style.display = 'block'; return;
+  }
+  if (password.length < 4) {
+    errEl.textContent = '// ERROR: Password must be at least 4 characters.';
+    errEl.style.display = 'block'; return;
+  }
+
+  const users = JSON.parse(localStorage.getItem('lifeos_users') || '{}');
+
+  if (mode === 'signup') {
+    if (users[username]) {
+      errEl.textContent = '// ERROR: Username already exists. Try logging in.';
+      errEl.style.display = 'block'; return;
+    }
+    users[username] = { password, createdAt: Date.now() };
+    localStorage.setItem('lifeos_users', JSON.stringify(users));
+    loginSuccess(username);
+  } else {
+    if (!users[username] || users[username].password !== password) {
+      errEl.textContent = '// ERROR: Invalid credentials. Check username/password.';
+      errEl.style.display = 'block'; return;
+    }
+    loginSuccess(username);
+  }
+}
+
+function loginSuccess(username) {
+  currentUser = { username, loginAt: Date.now() };
+  localStorage.setItem('lifeos_user', JSON.stringify(currentUser));
+  showPage('hero');
+}
+
+function guestLogin() {
+  currentUser = { username: 'Guest', loginAt: Date.now() };
+  showPage('hero');
+}
+
+function logout() {
+  localStorage.removeItem('lifeos_user');
+  currentUser = null;
+  showPage('login-page');
+}
+
+// Run auth check on load
+window.addEventListener('DOMContentLoaded', initAuth);
 
 /* ══ NAV ══ */
 function showPage(id){
@@ -879,6 +1306,8 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 
 function renderDashboard(d){
   document.getElementById('nav-decision').textContent=`"${d.decision}"`;
+  const nu = document.getElementById('nav-username');
+  if (nu && currentUser) nu.textContent = `[ ${currentUser.username} ]`;
   const em=d.emotion;
   document.getElementById('es-emoji').textContent=em.emoji;
   document.getElementById('es-tone').textContent=em.tone;
@@ -1172,62 +1601,9 @@ async function chatbotReply(input) {
   }
 }
 
-/* ══ CHAT UI — injected into body ══ */
+/* ══ CHAT UI — built statically, shown/hidden via JS ══ */
 function buildChatUI() {
-  if (document.getElementById('chat-fab')) return; // already built
-  document.body.insertAdjacentHTML('beforeend', `
-  <button id="chat-fab" onclick="toggleChat()"
-    style="position:fixed;bottom:28px;right:28px;z-index:500;width:56px;height:56px;border-radius:50%;
-      background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;cursor:pointer;
-      box-shadow:0 8px 32px rgba(99,102,241,.5);display:flex;align-items:center;justify-content:center;
-      font-size:22px;transition:transform .2s,box-shadow .2s;position:fixed">
-    💬
-    <span id="chat-badge" style="position:absolute;top:0;right:0;width:16px;height:16px;
-      background:#f43f5e;border-radius:50%;font-size:9px;color:#fff;display:flex;
-      align-items:center;justify-content:center;font-weight:700;pointer-events:none">1</span>
-  </button>
-
-  <div id="chat-panel" style="display:none;position:fixed;bottom:96px;right:28px;z-index:500;
-    width:360px;max-width:calc(100vw - 40px);height:500px;background:#0d1117;
-    border:1px solid rgba(99,102,241,.3);border-radius:20px;flex-direction:column;
-    box-shadow:0 24px 80px rgba(0,0,0,.7);overflow:hidden">
-
-    <div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));
-      border-bottom:1px solid rgba(99,102,241,.2);padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0">
-      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);
-        display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🤖</div>
-      <div style="flex:1">
-        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem;color:#f1f5f9">LifeOS Assistant</div>
-        <div style="font-size:.72rem;color:#10b981;display:flex;align-items:center;gap:4px">
-          <span style="width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block;flex-shrink:0"></span>Always online
-        </div>
-      </div>
-      <button onclick="toggleChat()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:22px;padding:4px;line-height:1;flex-shrink:0">×</button>
-    </div>
-
-    <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
-      <button onclick="quickAsk('What do you recommend?')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#a5b4fc;cursor:pointer;font-family:Inter,sans-serif">🎯 Recommend</button>
-      <button onclick="quickAsk('What are the main risks?')" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#fbbf24;cursor:pointer;font-family:Inter,sans-serif">⚠️ Risks</button>
-      <button onclick="quickAsk('Show me the action plan')" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#34d399;cursor:pointer;font-family:Inter,sans-serif">📋 Plan</button>
-      <button onclick="quickAsk('What happens in 3 years?')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#c4b5fd;cursor:pointer;font-family:Inter,sans-serif">🔮 Outcomes</button>
-    </div>
-
-    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:0"></div>
-
-    <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;align-items:flex-end;flex-shrink:0">
-      <textarea id="chat-input" rows="1"
-        onkeydown="chatKeydown(event)"
-        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
-        placeholder="Ask anything about your decision..."
-        style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;
-          padding:9px 12px;color:#e2e8f0;font-size:.83rem;outline:none;resize:none;
-          font-family:Inter,sans-serif;line-height:1.5;max-height:80px;transition:border-color .2s"></textarea>
-      <button onclick="sendChat()"
-        style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);
-          border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
-          font-size:15px;flex-shrink:0">➤</button>
-    </div>
-  </div>`);
+  // Already in DOM as static HTML — nothing to inject
 }
 
 function toggleChat() {
@@ -1316,6 +1692,15 @@ function chatKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
 }
 
+function setChatKey() {
+  const k = prompt('Paste your OpenAI API key (sk-...):\n\nEnables full GPT-4o-mini answers for any question.');
+  if (!k || !k.trim()) return;
+  chatApiKey = k.trim();
+  const status = document.getElementById('chat-key-status');
+  if (status) { status.textContent = 'AI: GPT-4o-mini ✓'; status.style.color = '#10b981'; }
+  addBotMessage('AI key set! 🚀 I can now answer anything — ask me any question on any topic.');
+}
+
 function quickAsk(q) {
   buildChatUI();
   const panel = document.getElementById('chat-panel');
@@ -1348,5 +1733,64 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+
+<!-- ══ CHAT UI — STATIC HTML ══ -->
+<button id="chat-fab" onclick="toggleChat()" style="position:fixed;bottom:28px;right:28px;z-index:500;
+  width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+  border:none;cursor:pointer;box-shadow:0 8px 32px rgba(99,102,241,.5);
+  display:flex;align-items:center;justify-content:center;font-size:22px;transition:transform .2s">
+  💬
+  <span id="chat-badge" style="position:absolute;top:0;right:0;width:16px;height:16px;
+    background:#f43f5e;border-radius:50%;font-size:9px;color:#fff;display:flex;
+    align-items:center;justify-content:center;font-weight:700;pointer-events:none">1</span>
+</button>
+
+<div id="chat-panel" style="display:none;position:fixed;bottom:96px;right:28px;z-index:500;
+  width:360px;max-width:calc(100vw - 40px);height:520px;background:#0d1117;
+  border:1px solid rgba(99,102,241,.3);border-radius:20px;flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.7);overflow:hidden">
+
+  <div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));
+    border-bottom:1px solid rgba(99,102,241,.2);padding:14px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+    <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0">🤖</div>
+    <div style="flex:1">
+      <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.9rem;color:#f1f5f9">LifeOS Assistant</div>
+      <div style="font-size:.68rem;color:#10b981;display:flex;align-items:center;gap:4px">
+        <span style="width:5px;height:5px;border-radius:50%;background:#10b981;display:inline-block"></span>
+        Always online
+      </div>
+    </div>
+    <button onclick="toggleChat()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:20px;padding:4px;line-height:1">×</button>
+  </div>
+
+  <div style="padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px;flex-shrink:0">
+    <span id="chat-key-status" style="font-size:.67rem;font-family:monospace;flex:1;color:#475569">AI: local mode</span>
+    <button onclick="setChatKey()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);
+      border-radius:6px;padding:3px 9px;font-size:.67rem;color:#a5b4fc;cursor:pointer;white-space:nowrap">🔑 Set AI Key</button>
+  </div>
+
+  <div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">
+    <button onclick="quickAsk('What do you recommend?')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:3px 9px;font-size:.68rem;color:#a5b4fc;cursor:pointer">🎯 Recommend</button>
+    <button onclick="quickAsk('What are the main risks?')" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:3px 9px;font-size:.68rem;color:#fbbf24;cursor:pointer">⚠️ Risks</button>
+    <button onclick="quickAsk('Show me the action plan')" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:3px 9px;font-size:.68rem;color:#34d399;cursor:pointer">📋 Plan</button>
+    <button onclick="quickAsk('What happens in 3 years?')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:20px;padding:3px 9px;font-size:.68rem;color:#c4b5fd;cursor:pointer">🔮 Outcomes</button>
+  </div>
+
+  <div id="chat-messages" style="flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column"></div>
+
+  <div style="padding:10px 12px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;align-items:flex-end;flex-shrink:0">
+    <textarea id="chat-input" rows="1" onkeydown="chatKeydown(event)"
+      oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
+      placeholder="Ask me anything..."
+      style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;
+        padding:8px 12px;color:#e2e8f0;font-size:.82rem;outline:none;resize:none;
+        font-family:Inter,sans-serif;line-height:1.5;max-height:80px"></textarea>
+    <button onclick="sendChat()" style="width:34px;height:34px;border-radius:10px;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">➤</button>
+  </div>
+</div>
+
 </body>
 </html>
