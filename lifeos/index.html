@@ -6,7 +6,7 @@
 <title>LifeOS — Decision Intelligence</title>
 <!-- Auth guard — redirect immediately if no session -->
 <script>
-  if (!localStorage.getItem('lifeos_user')) {
+  if (!sessionStorage.getItem('lifeos_user')) {
     window.location.replace('login.html');
   }
 </script>
@@ -953,8 +953,7 @@ let lastResult = null;
 let currentUser = null;
 
 function initAuth() {
-  // Always check — never trust a stale session silently
-  const saved = localStorage.getItem('lifeos_user');
+  const saved = sessionStorage.getItem('lifeos_user');
   if (!saved) {
     window.location.replace('login.html');
     return;
@@ -964,7 +963,7 @@ function initAuth() {
     if (!currentUser || !currentUser.username) throw new Error('bad session');
     showPage('hero');
   } catch(e) {
-    localStorage.removeItem('lifeos_user');
+    sessionStorage.removeItem('lifeos_user');
     window.location.replace('login.html');
   }
 }
@@ -1069,7 +1068,7 @@ function submitAuth() {
 
 function loginSuccess(username) {
   currentUser = { username, loginAt: Date.now() };
-  localStorage.setItem('lifeos_user', JSON.stringify(currentUser));
+  sessionStorage.setItem('lifeos_user', JSON.stringify(currentUser));
   showPage('hero');
 }
 
@@ -1079,9 +1078,9 @@ function guestLogin() {
 }
 
 function logout() {
-  localStorage.removeItem('lifeos_user');
+  sessionStorage.removeItem('lifeos_user');
   currentUser = null;
-  window.location.href = 'login.html';
+  window.location.replace('login.html');
 }
 
 // Run auth check on load — single consolidated init

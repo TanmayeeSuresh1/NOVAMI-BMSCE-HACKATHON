@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{background:#000;color:#e2e8f0;font-family:'Share Tech Mono',monospace;min-height:100vh;overflow:hidden}
+body{background:#000;color:#e2e8f0;font-family:'Share Tech Mono',monospace;min-height:100vh;overflow-x:hidden}
 
 /* Grid background */
 body::before{
@@ -34,7 +34,7 @@ body::after{
 @keyframes floatUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-5vh);opacity:0}}
 
 /* Layout */
-.layout{display:flex;min-height:100vh;position:relative;z-index:2}
+.layout{display:flex;min-height:100vh;position:relative;z-index:2;flex-wrap:wrap}
 
 /* ── LEFT PANEL ── */
 .left{
@@ -343,12 +343,12 @@ function auth() {
     }
   }
 
-  localStorage.setItem('lifeos_user', JSON.stringify({ username: uname, loginAt: Date.now() }));
+  sessionStorage.setItem('lifeos_user', JSON.stringify({ username: uname, loginAt: Date.now() }));
   window.location.href = 'index.html';
 }
 
 function guest() {
-  localStorage.setItem('lifeos_user', JSON.stringify({ username: 'Guest', loginAt: Date.now() }));
+  sessionStorage.setItem('lifeos_user', JSON.stringify({ username: 'Guest', loginAt: Date.now() }));
   window.location.href = 'index.html';
 }
 </script>
