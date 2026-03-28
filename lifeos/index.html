@@ -1205,12 +1205,6 @@ function buildChatUI() {
       <button onclick="toggleChat()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:22px;padding:4px;line-height:1;flex-shrink:0">×</button>
     </div>
 
-    <!-- AI Key row -->
-    <div id="chat-key-row" style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px;flex-shrink:0">
-      <span id="chat-key-status" style="font-size:.7rem;font-family:monospace;flex:1;color:#64748b">AI: local mode</span>
-      <button onclick="setChatKey()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:6px;padding:4px 10px;font-size:.7rem;color:#a5b4fc;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap">🔑 Set AI Key</button>
-    </div>
-
     <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
       <button onclick="quickAsk('What do you recommend?')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#a5b4fc;cursor:pointer;font-family:Inter,sans-serif">🎯 Recommend</button>
       <button onclick="quickAsk('What are the main risks?')" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#fbbf24;cursor:pointer;font-family:Inter,sans-serif">⚠️ Risks</button>
@@ -1320,18 +1314,6 @@ function sendChat() {
 
 function chatKeydown(e) {
   if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
-}
-
-function setChatKey() {
-  const k = prompt('Paste your OpenAI API key (sk-...):\n\nThis enables full AI answers for any question.');
-  if (!k) return;
-  chatApiKey = k.trim();
-  const status = document.getElementById('chat-key-status');
-  if (status) {
-    status.textContent = 'AI: GPT-4o-mini ✓';
-    status.style.color = '#10b981';
-  }
-  addBotMessage('AI key set! 🚀 I can now answer anything — ask me any question, on any topic.');
 }
 
 function quickAsk(q) {
