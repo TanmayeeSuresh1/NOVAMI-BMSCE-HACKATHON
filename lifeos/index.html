@@ -24,9 +24,8 @@ h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
 /* LOGIN PAGE — IMMERSIVE GAMER */
 #login-page{
   align-items:stretch;justify-content:stretch;position:relative;overflow:hidden;
-  background:#000;min-height:100vh;display:none;
+  background:#000;min-height:100vh;
 }
-#login-page.active{display:flex}
 
 /* Full background grid */
 #login-page::before{
@@ -663,7 +662,7 @@ textarea:focus{border-color:#00ff80;box-shadow:0 0 0 2px rgba(0,255,128,.1),0 0 
 <body>
 
 <!-- LOGIN PAGE -->
-<div class="page active" id="login-page">
+<div class="page" id="login-page">
 
   <!-- Left panel — branding -->
   <div class="login-left">
@@ -950,10 +949,16 @@ let currentUser = null;
 function initAuth() {
   const saved = localStorage.getItem('lifeos_user');
   if (saved) {
-    currentUser = JSON.parse(saved);
-    showPage('hero');
+    try {
+      currentUser = JSON.parse(saved);
+      showPage('hero');
+    } catch(e) {
+      localStorage.removeItem('lifeos_user');
+      showPage('login-page');
+    }
+  } else {
+    showPage('login-page');
   }
-  // else login-page is already active
   startLoginAnimations();
 }
 
@@ -1072,14 +1077,31 @@ function logout() {
   showPage('login-page');
 }
 
-// Run auth check on load
-window.addEventListener('DOMContentLoaded', initAuth);
+// Run auth check on load — single consolidated init
+window.addEventListener('DOMContentLoaded', () => {
+  initAuth();
+  // Particles
+  const container = document.getElementById('game-particles');
+  if (container) {
+    const colors = ['rgba(0,255,128,.7)','rgba(0,200,255,.6)','rgba(0,255,200,.5)','rgba(100,255,150,.4)'];
+    for (let i = 0; i < 35; i++) {
+      const span = document.createElement('span');
+      const size = Math.random() * 3 + 1;
+      span.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;
+        animation-duration:${5+Math.random()*12}s;animation-delay:${Math.random()*10}s;
+        background:${colors[Math.floor(Math.random()*colors.length)]};
+        box-shadow:0 0 ${size*3}px ${colors[0]};`;
+      container.appendChild(span);
+    }
+  }
+});
 
 /* ══ NAV ══ */
 function showPage(id){
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  window.scrollTo(0,0);
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const target = document.getElementById(id);
+  if (target) target.classList.add('active');
+  window.scrollTo(0, 0);
 }
 
 /* ══ EMOTION ══ */
@@ -1580,31 +1602,76 @@ function localReply(input) {
   return null; // signal to try AI
 }
 
-/* Main reply handler — tries AI first, falls back to local */
+/* Main reply handler — fully local, no API key needed */
 async function chatbotReply(input) {
-  // Try local KB first for instant common answers
-  const local = localReply(input);
+  const reply = localReply(input);
+  if (reply) return reply;
 
-  // Try AI
-  try {
-    const aiReply = await callChatAI(input);
-    return aiReply;
-  } catch (err) {
-    if (err.message === 'NO_KEY') {
-      // No key — use local if available, else prompt to set key
-      if (local) return local;
-      return `I can answer that better with an AI key! Tap "Set AI Key" below to enable full answers, or ask me about your decision analysis — I can answer those without a key.`;
-    }
-    // API error — fall back to local
-    if (local) return local + '\n\n_(AI unavailable — showing local analysis)_';
-    return `Something went wrong with the AI (${err.message}). Try again or ask about your decision analysis — I can answer those locally.`;
-  }
+  // Smart general fallback — answer anything based on keywords
+  const t = input.toLowerCase();
+
+  // Career advice
+  if (/career|job|work|salary|promotion|boss|resign|quit|hire|interview/i.test(t))
+    return `Career decisions are tough. Key things to consider:\n\n• What does your ideal day look like in 2 years?\n• Is this move driven by growth or escape?\n• Have you calculated the financial impact?\n\nRun a full analysis above and I'll give you a detailed breakdown specific to your situation.`;
+
+  // Finance / money
+  if (/money|invest|stock|crypto|savings|debt|loan|budget|wealth|income|tax/i.test(t))
+    return `Financial decisions need numbers, not just feelings. Quick framework:\n\n• Emergency fund first (3-6 months expenses)\n• High-interest debt before investing\n• Diversify — never put all savings in one place\n• Time in market beats timing the market\n\nFor your specific decision, run the analysis and the Finance Agent will model it out.`;
+
+  // Relationships
+  if (/relationship|love|partner|marriage|breakup|divorce|dating|family|friend/i.test(t))
+    return `Relationship decisions are deeply personal. A few honest questions:\n\n• Are you making this decision from fear or from values?\n• What does your gut say when you're calm?\n• Have you talked openly with the person involved?\n\nThe Emotion Agent in the analysis is specifically designed for decisions like this.`;
+
+  // Education
+  if (/study|degree|college|university|course|learn|skill|mba|phd|master/i.test(t))
+    return `Education ROI depends on your goal:\n\n• For credentials/networking → degree often worth it\n• For skills → self-learning + projects can outperform\n• For career switch → bootcamps or certifications are faster\n\nKey question: what specific door does this open that's currently closed?`;
+
+  // Health / fitness
+  if (/health|fitness|diet|exercise|weight|sleep|stress|mental|anxiety|doctor/i.test(t))
+    return `Health decisions compound over time — small consistent actions beat big dramatic ones.\n\n• Sleep is the highest ROI health investment\n• Stress management is as important as diet\n• Don't optimize for speed, optimize for sustainability\n\nIf this is a major health decision, the Emotion + Risk agents can help frame it.`;
+
+  // Startup / business
+  if (/startup|business|entrepreneur|founder|product|market|customer|revenue|idea/i.test(t))
+    return `Startup decisions need brutal honesty:\n\n• Do you have evidence people want this, or just belief?\n• Can you survive 18 months without revenue?\n• What's your unfair advantage?\n\nRun the Career analysis — the Logic and Finance agents will stress-test your idea.`;
+
+  // Relocation / travel
+  if (/move|relocate|city|country|abroad|travel|visa|migrate/i.test(t))
+    return `Relocation is one of the highest-impact life decisions:\n\n• Cost of living difference can change your savings rate dramatically\n• Social network rebuild takes 1-2 years — factor that in\n• Remote work changes the calculus entirely\n\nRun the Relocation template in the analyzer for a full breakdown.`;
+
+  // Motivation / productivity
+  if (/motivat|productiv|focus|procrastinat|habit|routine|discipline|goal/i.test(t))
+    return `Motivation is unreliable — systems beat willpower every time.\n\n• Make the desired action the path of least resistance\n• Track one metric that matters\n• Identity-based habits stick: "I am someone who..." not "I want to..."\n• 2-minute rule: if it takes less than 2 min, do it now`;
+
+  // Confidence / self-doubt
+  if (/confident|doubt|scared|afraid|imposter|worth|capable|believe|trust myself/i.test(t))
+    return `Self-doubt is normal — even high performers feel it.\n\n• Imposter syndrome is most common in competent people\n• Action reduces fear more than thinking does\n• Evidence log: write down 3 things you've done well this week\n• "Courage is not the absence of fear — it's acting despite it"`;
+
+  // Time / timing
+  if (/when|timing|right time|too late|too early|age|young|old/i.test(t))
+    return `On timing:\n\n• The best time was yesterday. The second best is now.\n• "Too late" is almost always a story, not a fact\n• Most successful pivots happen between ages 28-45\n• Reversibility matters more than timing — can you course-correct?\n\nYour confidence score from the analysis tells you if you have enough info to decide now.`;
+
+  // Happiness / life purpose
+  if (/happy|happiness|purpose|meaning|fulfil|passion|life|worth it|regret/i.test(t))
+    return `On happiness and purpose:\n\n• Research shows autonomy, mastery, and connection matter more than money above a baseline\n• "Follow your passion" is bad advice — passion follows mastery\n• Regret minimization: imagine yourself at 80 looking back. Which choice would you regret not taking?\n• Meaning comes from contribution, not consumption`;
+
+  // How LifeOS works
+  if (/how.*work|what.*do|lifeos|this app|feature|explain/i.test(t))
+    return `LifeOS is a decision intelligence system. Here's how it works:\n\n1. You enter a decision\n2. 4 AI agents analyze it in parallel — Logic, Finance, Emotion, Risk\n3. They debate and disagree (that's the point)\n4. You get a confidence score, 3-year outcome simulation, and a 3-week action plan\n\nAll offline — no API key needed. Just type your decision and hit Analyze.`;
+
+  // Greetings
+  if (/^(hi|hello|hey|sup|yo|what'?s up|howdy)/i.test(input))
+    return `Hey! 👋 I'm your LifeOS Assistant.\n\nAsk me anything — career, finance, relationships, life decisions, productivity, or just thinking out loud. I'm here to help.\n\nOr run a decision analysis above and I'll answer specific questions about your results.`;
+
+  // Thanks
+  if (/thank|thanks|great|awesome|helpful|perfect|nice/i.test(t))
+    return `You've got this. 🙌 The best decision is the one you actually execute — not the perfect one you keep thinking about.`;
+
+  // Default smart fallback
+  return `Good question. Here's how I'd think about it:\n\n• What's the actual decision you're trying to make?\n• What would you do if you knew you couldn't fail?\n• What would you advise a close friend in your situation?\n\nFor a structured analysis with 4 AI agents, outcomes simulation, and an action plan — type your decision in the input above and hit Analyze. I'll then be able to give you much more specific answers.`;
 }
 
 /* ══ CHAT UI — built statically, shown/hidden via JS ══ */
-function buildChatUI() {
-  // Already in DOM as static HTML — nothing to inject
-}
+function buildChatUI() { /* chat HTML is static in DOM — nothing to do */ }
 
 function toggleChat() {
   buildChatUI();
@@ -1661,6 +1728,8 @@ function sendChat() {
   input.value = '';
   input.style.height = 'auto';
   addUserMessage(text);
+
+  // Show typing indicator
   const msgs = document.getElementById('chat-messages');
   const typing = document.createElement('div');
   typing.id = 'typing-indicator';
@@ -1676,16 +1745,20 @@ function sendChat() {
     </div>`;
   msgs.appendChild(typing);
   msgs.scrollTop = msgs.scrollHeight;
-  // chatbotReply is now async
-  chatbotReply(text).then(reply => {
-    const t = document.getElementById('typing-indicator');
-    if (t) t.remove();
-    addBotMessage(reply);
-  }).catch(() => {
-    const t = document.getElementById('typing-indicator');
-    if (t) t.remove();
-    addBotMessage('Something went wrong. Try again!');
-  });
+
+  Promise.resolve()
+    .then(() => chatbotReply(text))
+    .then(reply => {
+      const t = document.getElementById('typing-indicator');
+      if (t) t.remove();
+      addBotMessage(reply || 'I had trouble with that. Try asking differently!');
+    })
+    .catch(err => {
+      const t = document.getElementById('typing-indicator');
+      if (t) t.remove();
+      addBotMessage('Something went wrong. Try again!');
+      console.error('Chat error:', err);
+    });
 }
 
 function chatKeydown(e) {
@@ -1715,23 +1788,7 @@ function quickAsk(q) {
 }
 
 /* ══ GAMER PARTICLES + CHAT INIT ══ */
-window.addEventListener('DOMContentLoaded', () => {
-  // Always build the chat button on load so it's visible immediately
-  buildChatUI();
-
-  const container = document.getElementById('game-particles');
-  if (!container) return;
-  const colors = ['rgba(0,255,128,.7)','rgba(0,200,255,.6)','rgba(0,255,200,.5)','rgba(100,255,150,.4)'];
-  for (let i = 0; i < 35; i++) {
-    const span = document.createElement('span');
-    const size = Math.random() * 3 + 1;
-    span.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;
-      animation-duration:${5+Math.random()*12}s;animation-delay:${Math.random()*10}s;
-      background:${colors[Math.floor(Math.random()*colors.length)]};
-      box-shadow:0 0 ${size*3}px ${colors[0]};`;
-    container.appendChild(span);
-  }
-});
+// Handled in the single DOMContentLoaded above
 </script>
 
 <!-- ══ CHAT UI — STATIC HTML ══ -->
@@ -1764,11 +1821,7 @@ window.addEventListener('DOMContentLoaded', () => {
     <button onclick="toggleChat()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:20px;padding:4px;line-height:1">×</button>
   </div>
 
-  <div style="padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px;flex-shrink:0">
-    <span id="chat-key-status" style="font-size:.67rem;font-family:monospace;flex:1;color:#475569">AI: local mode</span>
-    <button onclick="setChatKey()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);
-      border-radius:6px;padding:3px 9px;font-size:.67rem;color:#a5b4fc;cursor:pointer;white-space:nowrap">🔑 Set AI Key</button>
-  </div>
+
 
   <div style="padding:8px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:5px;flex-wrap:wrap;flex-shrink:0">
     <button onclick="quickAsk('What do you recommend?')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:3px 9px;font-size:.68rem;color:#a5b4fc;cursor:pointer">🎯 Recommend</button>
