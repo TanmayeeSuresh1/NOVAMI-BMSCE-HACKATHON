@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LifeOS — Decision Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080b14;--bg2:#0d1117;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+  --text:#e2e8f0;--muted:#64748b;--accent:#6366f1;--accent2:#8b5cf6;
+  --green:#10b981;--red:#f43f5e;--yellow:#f59e0b;--cyan:#06b6d4;}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Space Grotesk',sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:var(--bg2)}
+::-webkit-scrollbar-thumb{background:rgba(99,102,241,.4);border-radius:3px}
+.page{display:none;min-height:100vh;animation:fadeIn .4s ease}.page.active{display:flex}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.orb1{top:-15%;left:-8%;width:600px;height:600px;background:radial-gradient(circle,rgba(99,102,241,.1) 0%,transparent 70%)}
+.orb2{bottom:-15%;right:-8%;width:500px;height:500px;background:radial-gradient(circle,rgba(139,92,246,.09) 0%,transparent 70%)}
+/* HERO — GAMER THEME */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+#hero{
+  align-items:center;justify-content:center;position:relative;overflow:hidden;
+  background:#000;
+}
+/* Scanlines overlay */
+#hero::after{
+  content:'';position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.15) 2px,rgba(0,0,0,.15) 4px);
+}
+/* Neon grid floor */
+#hero::before{
+  content:'';position:absolute;inset:0;z-index:0;
+  background:
+    linear-gradient(rgba(0,255,128,.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,128,.03) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:gridScroll 8s linear infinite;
+}
+@keyframes gridScroll{from{background-position:0 0}to{background-position:0 40px}}
+
+/* Neon orbs */
+#hero .orb1{background:radial-gradient(circle,rgba(0,255,128,.12) 0%,transparent 70%);top:-10%;left:-5%}
+#hero .orb2{background:radial-gradient(circle,rgba(0,200,255,.1) 0%,transparent 70%);bottom:-10%;right:-5%}
+
+/* Corner HUD brackets */
+.hud-corner{position:absolute;width:60px;height:60px;z-index:2;pointer-events:none}
+.hud-tl{top:24px;left:24px;border-top:2px solid #00ff80;border-left:2px solid #00ff80}
+.hud-tr{top:24px;right:24px;border-top:2px solid #00ff80;border-right:2px solid #00ff80}
+.hud-bl{bottom:24px;left:24px;border-bottom:2px solid #00ff80;border-left:2px solid #00ff80}
+.hud-br{bottom:24px;right:24px;border-bottom:2px solid #00ff80;border-right:2px solid #00ff80}
+
+/* Floating particles */
+.game-particles{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.game-particles span{position:absolute;border-radius:50%;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-10vh);opacity:0}}
+
+/* Hero content */
+.hero-content{text-align:center;max-width:800px;padding:0 24px;position:relative;z-index:3}
+
+/* System status bar */
+.hero-status{display:flex;align-items:center;justify-content:center;gap:20px;margin-bottom:20px;font-family:'Share Tech Mono',monospace;font-size:11px;color:#00ff80;letter-spacing:.08em}
+.status-item{display:flex;align-items:center;gap:6px}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#00ff80;animation:blink 1.2s step-end infinite}
+.status-sep{color:rgba(0,255,128,.3)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Badge */
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(0,255,128,.06);
+  border:1px solid rgba(0,255,128,.4);
+  border-radius:4px;padding:7px 18px;font-size:11px;
+  color:#00ff80;margin-bottom:22px;
+  letter-spacing:.12em;text-transform:uppercase;font-weight:600;
+  font-family:'Share Tech Mono',monospace;
+  box-shadow:0 0 16px rgba(0,255,128,.15),inset 0 0 12px rgba(0,255,128,.04);
+  position:relative;
+}
+.hero-badge::before{content:'[ ';color:rgba(0,255,128,.5)}
+.hero-badge::after{content:' ]';color:rgba(0,255,128,.5)}
+
+/* Title */
+.hero-title{
+  font-family:'Orbitron',sans-serif;
+  font-size:clamp(2.2rem,5.5vw,4.2rem);
+  font-weight:900;line-height:1.05;
+  color:#fff;margin-bottom:4px;
+  text-transform:uppercase;letter-spacing:.04em;
+  text-shadow:0 0 30px rgba(0,255,128,.4),0 0 60px rgba(0,255,128,.15);
+}
+.hero-title-line2{display:block;margin-bottom:18px}
+
+/* Glitch + neon gradient text */
+.gradient{
+  background:linear-gradient(90deg,#00ff80,#00c8ff,#00ff80);
+  background-size:200% auto;
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  animation:neonShimmer 3s linear infinite;
+  position:relative;display:inline-block;
+}
+.gradient::before{
+  content:attr(data-text);position:absolute;left:2px;top:0;
+  background:linear-gradient(90deg,#ff0080,#00c8ff);
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;
+  opacity:0;animation:glitch 4s infinite;
+}
+@keyframes neonShimmer{0%{background-position:0% center}100%{background-position:200% center}}
+@keyframes glitch{
+  0%,94%,100%{opacity:0;transform:none}
+  95%{opacity:.6;transform:translate(-3px,0) skewX(-5deg)}
+  97%{opacity:.4;transform:translate(3px,0) skewX(3deg)}
+  99%{opacity:.5;transform:translate(-1px,0)}
+}
+
+/* XP bar divider */
+.hero-xpbar{width:280px;margin:0 auto 20px;position:relative}
+.xp-track{height:4px;background:rgba(0,255,128,.1);border-radius:2px;overflow:hidden;border:1px solid rgba(0,255,128,.2)}
+.xp-fill{height:100%;width:0;background:linear-gradient(90deg,#00ff80,#00c8ff);border-radius:2px;animation:xpLoad 2s 0.5s ease-out forwards;box-shadow:0 0 8px #00ff80}
+@keyframes xpLoad{to{width:78%}}
+.xp-labels{display:flex;justify-content:space-between;font-family:'Share Tech Mono',monospace;font-size:10px;color:rgba(0,255,128,.5);margin-top:4px}
+
+/* Subtitle */
+.hero-sub{
+  font-size:.98rem;color:rgba(200,255,230,.7);line-height:1.8;
+  margin:0 auto 28px;max-width:560px;
+  font-family:'Share Tech Mono',monospace;font-size:.82rem;letter-spacing:.02em;
+}
+
+/* Feature tags */
+.feature-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:34px}
+.ftag{
+  background:rgba(0,255,128,.05);
+  border:1px solid rgba(0,255,128,.2);
+  border-radius:3px;padding:5px 12px;font-size:11px;
+  color:rgba(0,255,128,.8);
+  font-family:'Share Tech Mono',monospace;letter-spacing:.06em;
+  transition:all .2s;text-transform:uppercase;
+}
+.ftag:hover{background:rgba(0,255,128,.12);border-color:#00ff80;color:#00ff80;box-shadow:0 0 10px rgba(0,255,128,.2)}
+
+/* CTA button */
+.cta-btn{
+  display:inline-flex;align-items:center;gap:12px;
+  background:transparent;
+  border:2px solid #00ff80;
+  border-radius:4px;padding:15px 36px;
+  font-size:.9rem;font-weight:700;color:#00ff80;cursor:pointer;
+  transition:all .2s;
+  font-family:'Orbitron',sans-serif;
+  letter-spacing:.1em;text-transform:uppercase;
+  box-shadow:0 0 20px rgba(0,255,128,.25),inset 0 0 20px rgba(0,255,128,.04);
+  position:relative;overflow:hidden;
+}
+.cta-btn::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,255,128,.15),transparent);
+  opacity:0;transition:opacity .2s;
+}
+.cta-btn:hover{
+  background:rgba(0,255,128,.08);
+  box-shadow:0 0 40px rgba(0,255,128,.5),inset 0 0 30px rgba(0,255,128,.08);
+  transform:translateY(-2px);color:#fff;
+}
+.cta-btn:hover::before{opacity:1}
+.cta-btn:active{transform:translateY(0)}
+
+/* Scroll hint */
+.hero-scroll{margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  color:rgba(0,255,128,.3);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;
+  font-family:'Share Tech Mono',monospace}
+.scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(0,255,128,.5),transparent);
+  animation:scrollPulse 2s ease-in-out infinite}
+@keyframes scrollPulse{0%,100%{opacity:.3;transform:scaleY(.8)}50%{opacity:1;transform:scaleY(1)}}
+/* INPUT — GAMER THEME */
+#input-page{
+  align-items:flex-start;justify-content:center;padding:40px 24px;overflow-y:auto;
+  background:#000;position:relative;
+}
+/* Scrolling grid */
+#input-page::before{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    linear-gradient(rgba(0,255,128,.025) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,128,.025) 1px,transparent 1px);
+  background-size:40px 40px;
+  animation:inputGridScroll 10s linear infinite;
+}
+@keyframes inputGridScroll{from{background-position:0 0}to{background-position:40px 40px}}
+/* Scanlines */
+#input-page::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);
+}
+#input-page .orb1{background:radial-gradient(circle,rgba(0,255,128,.08) 0%,transparent 70%)}
+#input-page .orb2{background:radial-gradient(circle,rgba(0,200,255,.07) 0%,transparent 70%)}
+.input-wrap{width:100%;max-width:700px;position:relative;z-index:1}
+
+/* Page header */
+.input-page-hdr{margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid rgba(0,255,128,.15);position:relative}
+.input-page-title{
+  font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:900;
+  color:#00ff80;text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px;
+  text-shadow:0 0 20px rgba(0,255,128,.4);
+}
+/* Blinking cursor after title */
+.input-page-title::after{content:'_';animation:cursorBlink .8s step-end infinite;color:#00ff80;margin-left:4px}
+@keyframes cursorBlink{0%,100%{opacity:1}50%{opacity:0}}
+.input-page-sub{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:rgba(0,255,128,.5);letter-spacing:.06em}
+.input-breadcrumb{font-family:'Share Tech Mono',monospace;font-size:.7rem;color:rgba(0,255,128,.35);
+  margin-bottom:20px;letter-spacing:.08em}
+
+/* Animated HUD corners on cards */
+.card{
+  background:rgba(0,10,5,.95);
+  border:1px solid rgba(0,255,128,.2);
+  border-radius:4px;padding:28px;margin-bottom:16px;
+  box-shadow:0 0 30px rgba(0,255,128,.05),inset 0 0 30px rgba(0,0,0,.5);
+  position:relative;overflow:hidden;
+  animation:cardAppear .4s ease both;
+}
+.card:nth-child(2){animation-delay:.1s}
+.card:nth-child(3){animation-delay:.2s}
+@keyframes cardAppear{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+/* Top neon line */
+.card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,#00ff80,#00c8ff,transparent);
+  opacity:.6;animation:scanLine 3s linear infinite;
+}
+@keyframes scanLine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+/* Corner brackets */
+.card::after{
+  content:'';position:absolute;bottom:0;right:0;
+  width:16px;height:16px;
+  border-bottom:2px solid rgba(0,255,128,.4);
+  border-right:2px solid rgba(0,255,128,.4);
+}
+.card-title{
+  font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:700;
+  color:#00ff80;margin-bottom:5px;text-transform:uppercase;letter-spacing:.06em;
+  text-shadow:0 0 12px rgba(0,255,128,.3);
+}
+.card-sub{font-family:'Share Tech Mono',monospace;font-size:.75rem;color:rgba(0,255,128,.45);margin-bottom:20px;letter-spacing:.04em}
+.section-label{
+  font-family:'Share Tech Mono',monospace;font-size:.68rem;font-weight:600;
+  color:rgba(0,255,128,.5);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;
+}
+
+/* Templates */
+.templates{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tpl-btn{
+  display:flex;align-items:center;gap:6px;
+  background:rgba(0,255,128,.04);border:1px solid rgba(0,255,128,.2);
+  border-radius:3px;padding:7px 13px;font-size:.75rem;
+  color:rgba(0,255,128,.7);cursor:pointer;transition:all .2s;
+  font-family:'Share Tech Mono',monospace;letter-spacing:.04em;text-transform:uppercase;
+}
+.tpl-btn:hover{
+  border-color:#00ff80;background:rgba(0,255,128,.1);color:#00ff80;
+  box-shadow:0 0 12px rgba(0,255,128,.2);transform:translateY(-1px);
+}
+
+/* Textarea */
+textarea{
+  width:100%;background:rgba(0,20,10,.8);
+  border:1px solid rgba(0,255,128,.25);border-radius:3px;
+  padding:14px 16px;color:#00ff80;font-size:.9rem;resize:vertical;
+  outline:none;font-family:'Share Tech Mono',monospace;line-height:1.7;
+  transition:border-color .2s,box-shadow .2s;
+  caret-color:#00ff80;
+}
+textarea::placeholder{color:rgba(0,255,128,.25)}
+textarea:focus{border-color:#00ff80;box-shadow:0 0 0 2px rgba(0,255,128,.1),0 0 20px rgba(0,255,128,.08)}
+
+/* Char count */
+.char-count{
+  text-align:right;font-size:.68rem;color:rgba(0,255,128,.35);
+  margin-top:5px;font-family:'Share Tech Mono',monospace;letter-spacing:.06em;
+}
+
+/* Emotion live */
+.emotion-live{
+  display:flex;align-items:center;gap:9px;margin-top:12px;
+  background:rgba(0,255,128,.03);border:1px solid rgba(0,255,128,.15);
+  border-radius:3px;padding:9px 14px;font-size:.75rem;
+  color:rgba(0,255,128,.4);transition:all .3s;min-height:36px;
+  font-family:'Share Tech Mono',monospace;letter-spacing:.04em;
+}
+.emotion-dot{width:8px;height:8px;border-radius:50%;background:#475569;transition:background .3s;flex-shrink:0}
+
+/* Context fields */
+.ctx-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:4px}
+.ctx-field label{
+  display:block;font-size:.68rem;color:rgba(0,255,128,.5);margin-bottom:6px;
+  font-weight:600;font-family:'Share Tech Mono',monospace;text-transform:uppercase;letter-spacing:.08em;
+}
+.ctx-field input,.ctx-field select{
+  width:100%;background:rgba(0,20,10,.8);border:1px solid rgba(0,255,128,.2);
+  border-radius:3px;padding:10px 13px;color:#00ff80;font-size:.82rem;
+  outline:none;font-family:'Share Tech Mono',monospace;transition:border-color .2s;
+}
+.ctx-field input::placeholder{color:rgba(0,255,128,.25)}
+.ctx-field input:focus,.ctx-field select:focus{border-color:#00ff80;box-shadow:0 0 10px rgba(0,255,128,.1)}
+.ctx-field select option{background:#000d05;color:#00ff80}
+
+/* Submit button — with radar ping */
+.submit-btn{
+  width:100%;display:flex;align-items:center;justify-content:center;gap:10px;
+  background:transparent;border:2px solid #00ff80;border-radius:4px;padding:16px;
+  font-size:.9rem;font-weight:700;color:#00ff80;cursor:pointer;
+  transition:all .2s;font-family:'Orbitron',sans-serif;
+  letter-spacing:.1em;text-transform:uppercase;
+  box-shadow:0 0 20px rgba(0,255,128,.2),inset 0 0 20px rgba(0,255,128,.03);
+  position:relative;overflow:hidden;margin-top:4px;
+}
+/* Radar ping animation on enabled button */
+.submit-btn:not(:disabled)::before{
+  content:'';position:absolute;inset:0;border-radius:4px;
+  box-shadow:0 0 0 0 rgba(0,255,128,.4);
+  animation:radarPing 2s ease-out infinite;
+}
+@keyframes radarPing{
+  0%{box-shadow:0 0 0 0 rgba(0,255,128,.4)}
+  70%{box-shadow:0 0 0 12px rgba(0,255,128,0)}
+  100%{box-shadow:0 0 0 0 rgba(0,255,128,0)}
+}
+.submit-btn::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,rgba(0,255,128,.12),transparent,rgba(0,200,255,.08));
+  opacity:0;transition:opacity .2s;
+}
+.submit-btn:hover:not(:disabled){
+  background:rgba(0,255,128,.07);color:#fff;
+  box-shadow:0 0 40px rgba(0,255,128,.4),inset 0 0 30px rgba(0,255,128,.06);
+  transform:translateY(-2px);
+}
+.submit-btn:hover:not(:disabled)::after{opacity:1}
+.submit-btn:disabled{opacity:.3;cursor:not-allowed;border-color:rgba(0,255,128,.2);color:rgba(0,255,128,.3)}
+/* LOADING */
+#loading{align-items:center;justify-content:center;flex-direction:column;background:var(--bg)}
+.ring-wrap{position:relative;width:110px;height:110px;margin:0 auto 30px}
+.ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;
+  border-top-color:#6366f1;border-right-color:rgba(99,102,241,.2);animation:spin 1.8s linear infinite}
+.ring2{inset:12px;border-top-color:transparent;border-right-color:#8b5cf6;border-bottom-color:rgba(139,92,246,.2);animation:spin 2.8s linear infinite reverse}
+.ring3{inset:24px;border-top-color:rgba(167,139,250,.6);border-left-color:transparent;border-bottom-color:transparent;border-right-color:transparent;animation:spin 1.2s linear infinite}
+.ring-icon{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:26px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.load-title{font-size:1.6rem;font-weight:700;color:#f1f5f9;margin-bottom:8px;text-align:center}
+.load-sub{color:#64748b;font-size:.88rem;margin-bottom:34px;text-align:center}
+.steps{display:flex;flex-direction:column;gap:9px;max-width:340px;width:100%;padding:0 24px}
+.step{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  border-radius:11px;padding:10px 15px;opacity:0;transform:translateX(-20px);transition:all .4s cubic-bezier(.34,1.56,.64,1)}
+.step.show{opacity:1;transform:translateX(0)}.step.done{border-color:rgba(16,185,129,.3);background:rgba(16,185,129,.06)}
+.step-label{flex:1;font-size:.83rem;color:#94a3b8}
+.step-dot{width:7px;height:7px;border-radius:50%;background:#6366f1;animation:pulse 1s infinite;flex-shrink:0}
+.step.done .step-dot{background:#10b981;animation:none}
+@keyframes pulse{0%,100%{opacity:.2;transform:scale(.8)}50%{opacity:1;transform:scale(1.2)}}
+/* DASHBOARD */
+#dashboard{flex-direction:column;background:var(--bg);padding:0}
+.dash-inner{max-width:1160px;margin:0 auto;padding:28px 24px;width:100%}
+.dash-nav{display:flex;align-items:center;justify-content:space-between;background:rgba(13,17,23,.9);
+  border:1px solid var(--border);border-radius:14px;padding:13px 20px;margin-bottom:22px;backdrop-filter:blur(20px);flex-wrap:wrap;gap:10px}
+.nav-logo{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.1rem;
+  background:linear-gradient(135deg,#6366f1,#a78bfa);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.nav-decision{font-size:.8rem;color:#64748b;font-style:italic;max-width:420px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nav-actions{display:flex;gap:8px}
+.icon-btn{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:9px;padding:8px 13px;font-size:.81rem;color:#94a3b8;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif}
+.icon-btn:hover{background:rgba(255,255,255,.08);color:#e2e8f0}
+.emotion-strip{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.03);
+  border:1px solid var(--border);border-radius:12px;padding:13px 18px;margin-bottom:20px}
+.es-emoji{font-size:24px}.es-info{flex:1}.es-label{font-size:.74rem;color:#64748b;margin-bottom:2px}
+.es-tone{font-size:.92rem;font-weight:600}.es-msg{font-size:.8rem;color:#64748b;font-style:italic}
+.section-card{background:rgba(13,17,23,.85);border:1px solid var(--border);border-radius:18px;padding:24px;margin-bottom:20px;box-shadow:0 4px 24px rgba(0,0,0,.3)}
+.sec-hdr{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.sec-icon{font-size:17px}.sec-title{font-size:1.05rem;font-weight:600;color:#f1f5f9;flex:1}
+.pill{background:rgba(99,102,241,.12);border:1px solid rgba(99,102,241,.25);border-radius:20px;padding:3px 11px;font-size:.71rem;color:#a5b4fc;font-weight:500}
+/* CONFIDENCE */
+.conf-top{display:grid;grid-template-columns:1fr auto;gap:16px;margin-bottom:16px;align-items:start}
+.score-row{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:9px}
+.score-lbl{font-size:.8rem;color:#64748b}.score-val{font-size:2.2rem;font-weight:700;font-family:'Space Grotesk',sans-serif;line-height:1}
+.bar-track{height:9px;background:rgba(255,255,255,.06);border-radius:5px;overflow:hidden;margin-bottom:5px}
+.bar-fill{height:100%;border-radius:5px;width:0;transition:width 1.4s cubic-bezier(.34,1.2,.64,1)}
+.bar-labels{display:flex;justify-content:space-between;font-size:.67rem;color:#475569}
+.risk-badge{display:flex;flex-direction:column;align-items:center;justify-content:center;border:1px solid;border-radius:14px;padding:15px 20px;flex-shrink:0;min-width:100px;text-align:center}
+.risk-badge-lbl{font-size:.68rem;color:#64748b;margin-bottom:4px}.risk-badge-val{font-size:1.1rem;font-weight:700}
+.conf-cards{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px}
+.conf-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-radius:11px;padding:14px}
+.conf-card-hdr{font-size:.74rem;color:#64748b;font-weight:600;margin-bottom:8px}
+.conf-card-text{font-size:.83rem;color:#94a3b8;line-height:1.65}
+.rec-box{background:linear-gradient(135deg,rgba(99,102,241,.09),rgba(139,92,246,.09));border:1px solid rgba(99,102,241,.22);border-radius:13px;padding:17px}
+.rec-lbl{font-size:.7rem;color:#6366f1;font-weight:700;margin-bottom:6px;text-transform:uppercase;letter-spacing:.07em}
+.rec-text{font-size:.9rem;color:#c7d2fe;line-height:1.75}
+/* AGENTS */
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:16px}
+.agent-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.07);border-radius:13px;padding:16px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
+.agent-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--ac,#6366f1);opacity:0;transition:opacity .25s}
+.agent-card:hover::before,.agent-card.open::before{opacity:1}
+.agent-card:hover{border-color:var(--ac,#6366f1);transform:translateY(-2px)}
+.agent-card.open{border-color:var(--ac,#6366f1);background:rgba(255,255,255,.04)}
+.agent-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.agent-info{display:flex;align-items:center;gap:8px}
+.agent-dot{width:8px;height:8px;border-radius:50%}.agent-name{font-size:.87rem;font-weight:600;color:#e2e8f0}
+.agent-chevron{color:#64748b;font-size:11px;transition:transform .25s}
+.agent-card.open .agent-chevron{transform:rotate(180deg)}
+.agent-preview{font-size:.79rem;color:#64748b;line-height:1.6}
+.agent-full{font-size:.83rem;color:#94a3b8;line-height:1.72;padding-top:10px;border-top:1px solid rgba(255,255,255,.06);margin-top:10px;display:none;white-space:pre-wrap}
+.agent-card.open .agent-full{display:block}.agent-card.open .agent-preview{display:none}
+.debate-box{background:rgba(255,255,255,.02);border:1px solid rgba(245,158,11,.2);border-radius:13px;padding:18px;margin-top:4px}
+.debate-title{font-size:.75rem;color:#f59e0b;font-weight:700;text-transform:uppercase;letter-spacing:.07em;margin-bottom:14px}
+.debate-line{display:flex;gap:10px;margin-bottom:12px;align-items:flex-start}
+.debate-line:last-child{margin-bottom:0}
+.debate-speaker{font-size:.72rem;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;margin-top:1px;white-space:nowrap}
+.debate-msg{font-size:.82rem;color:#94a3b8;line-height:1.65}
+/* OUTCOMES */
+.outcomes-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:640px){.outcomes-grid{grid-template-columns:1fr}}
+.path-card{border:1px solid;border-radius:14px;padding:18px;transition:transform .2s}
+.path-card:hover{transform:translateY(-2px)}
+.path-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.path-type{font-size:.71rem;font-weight:700;border:1px solid;border-radius:20px;padding:4px 11px;letter-spacing:.04em}
+.path-prob{font-size:1.25rem;font-weight:700;font-family:'Space Grotesk',sans-serif}
+.tl{margin-bottom:14px}
+.tl-row{display:flex;gap:12px;margin-bottom:2px}
+.tl-spine{display:flex;flex-direction:column;align-items:center;width:18px;flex-shrink:0}
+.tl-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0;margin-top:3px;border:2px solid}
+.tl-line{width:2px;flex:1;min-height:20px;margin-top:3px;opacity:.2}
+.tl-body{padding-bottom:12px}
+.tl-period{font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.tl-text{font-size:.8rem;color:#94a3b8;line-height:1.6}
+.cases{display:flex;flex-direction:column;gap:7px}
+.case-row{display:flex;gap:8px;align-items:flex-start;background:rgba(255,255,255,.025);border-radius:9px;padding:9px 11px}
+.case-lbl{font-size:.67rem;color:#475569;font-weight:600;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.case-text{font-size:.79rem;color:#94a3b8;line-height:1.5}
+/* SYNTHESIS */
+.synthesis-box{background:linear-gradient(135deg,rgba(99,102,241,.07),rgba(16,185,129,.05));border:1px solid rgba(99,102,241,.2);border-radius:14px;padding:20px}
+.synth-choice{font-size:1.1rem;font-weight:700;color:#a5b4fc;margin-bottom:12px}
+.synth-why{display:flex;flex-direction:column;gap:8px;margin-bottom:14px}
+.synth-why-item{display:flex;gap:9px;font-size:.84rem;color:#94a3b8;line-height:1.6}
+.synth-bullet{color:#6366f1;font-size:16px;flex-shrink:0;margin-top:1px}
+.synth-caution{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:10px;padding:12px 14px;font-size:.83rem;color:#fbbf24;line-height:1.6}
+/* ACTION PLAN */
+.weeks{display:flex;flex-direction:column;gap:13px}
+.week-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.06);border-left:3px solid;border-radius:0 12px 12px 0;padding:15px 17px;transition:transform .2s}
+.week-card:hover{transform:translateX(3px)}
+.week-title{font-size:.81rem;font-weight:700;margin-bottom:11px;text-transform:uppercase;letter-spacing:.05em}
+.task-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.task-item{display:flex;align-items:flex-start;gap:8px;font-size:.82rem;color:#94a3b8;line-height:1.55}
+.task-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:6px}
+.copy-btn{display:flex;align-items:center;gap:5px;background:rgba(255,255,255,.04);border:1px solid var(--border);
+  border-radius:7px;padding:5px 11px;font-size:.75rem;color:#94a3b8;cursor:pointer;font-family:'Inter',sans-serif;transition:all .2s}
+.copy-btn:hover{color:#e2e8f0}
+.next-steps{background:rgba(99,102,241,.07);border:1px solid rgba(99,102,241,.2);border-radius:11px;padding:14px;margin-top:14px;font-size:.83rem;color:#a5b4fc;line-height:1.7}
+.next-steps-lbl{font-size:.72rem;color:#6366f1;font-weight:700;text-transform:uppercase;letter-spacing:.06em;margin-bottom:7px}
+.bottom-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:20px}
+@media(max-width:900px){.bottom-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HERO — GAMER THEME -->
+<div class="page active" id="hero">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+
+  <!-- HUD corner brackets -->
+  <div class="hud-corner hud-tl"></div>
+  <div class="hud-corner hud-tr"></div>
+  <div class="hud-corner hud-bl"></div>
+  <div class="hud-corner hud-br"></div>
+
+  <!-- Floating particles -->
+  <div class="game-particles" id="game-particles"></div>
+
+  <div class="hero-content">
+
+    <!-- System status bar -->
+    <div class="hero-status">
+      <div class="status-item"><span class="status-dot"></span>SYSTEM ONLINE</div>
+      <span class="status-sep">|</span>
+      <div class="status-item">4 AGENTS READY</div>
+      <span class="status-sep">|</span>
+      <div class="status-item">AI CORE v2.0</div>
+    </div>
+
+    <div class="hero-badge">AI-Powered Decision Intelligence</div>
+
+    <h1 class="hero-title">
+      STOP GUESSING.
+      <span class="hero-title-line2">
+        <span class="gradient" data-text="START DECIDING.">START DECIDING.</span>
+      </span>
+    </h1>
+
+    <!-- XP bar -->
+    <div class="hero-xpbar">
+      <div class="xp-track"><div class="xp-fill"></div></div>
+      <div class="xp-labels"><span>DECISION POWER</span><span>78 / 100 XP</span></div>
+    </div>
+
+    <p class="hero-sub">// 4 AI agents debate your options in parallel — Logic, Finance, Emotion, Risk<br>// Simulates 3-year outcomes · Scores confidence · Builds your action plan</p>
+
+    <div class="feature-tags">
+      <span class="ftag">&gt; AGENT DEBATE</span>
+      <span class="ftag">&gt; 3YR SIMULATION</span>
+      <span class="ftag">&gt; CONFIDENCE SCORE</span>
+      <span class="ftag">&gt; EMOTION DETECT</span>
+      <span class="ftag">&gt; SYNTHESIS</span>
+      <span class="ftag">&gt; ACTION PLAN</span>
+    </div>
+
+    <button class="cta-btn" onclick="showPage('input-page')">
+      ▶ &nbsp;LAUNCH ANALYSIS
+    </button>
+
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      <span>SCROLL TO CONTINUE</span>
+    </div>
+  </div>
+</div>
+
+<!-- INPUT — GAMER THEME -->
+<div class="page" id="input-page">
+  <div class="orb orb1"></div><div class="orb orb2"></div>
+  <div class="input-wrap">
+
+    <!-- Page header -->
+    <div class="input-page-hdr">
+      <div class="input-breadcrumb">LIFEOS &gt; MISSION CONTROL &gt; INPUT</div>
+      <div class="input-page-title">⚡ ENTER YOUR MISSION</div>
+      <div class="input-page-sub">// DEFINE YOUR DECISION — AI AGENTS WILL ANALYZE IN PARALLEL</div>
+    </div>
+
+    <!-- Decision card -->
+    <div class="card">
+      <div class="card-title">&gt; DECISION INPUT</div>
+      <div class="card-sub">// BE SPECIFIC — MORE CONTEXT = SHARPER ANALYSIS</div>
+      <div class="section-label">[ QUICK LOAD — SELECT MISSION TYPE ]</div>
+      <div class="templates">
+        <button class="tpl-btn" onclick="setTpl('Should I quit my job and start a startup, or stay and get promoted?')">⚔ CAREER</button>
+        <button class="tpl-btn" onclick="setTpl('Should I invest my savings in stocks or buy real estate?')">◈ FINANCE</button>
+        <button class="tpl-btn" onclick="setTpl('Should I pursue a Master\'s degree or gain work experience?')">◉ EDUCATION</button>
+        <button class="tpl-btn" onclick="setTpl('Should I move to a new city for a better job opportunity?')">▶ RELOCATE</button>
+      </div>
+      <textarea id="decision-input" rows="4" maxlength="500"
+        placeholder="// e.g. Should I take the job offer in Bangalore or start my own startup?"
+        oninput="onInput()"></textarea>
+      <div class="char-count">[ <span id="char-count">0</span> / 500 CHARS ]</div>
+      <div class="emotion-live" id="emotion-live">
+        <div class="emotion-dot" id="emotion-dot"></div>
+        <span id="emotion-live-text">// AWAITING INPUT — EMOTION SCANNER READY</span>
+      </div>
+    </div>
+
+    <!-- Context card -->
+    <div class="card">
+      <div class="card-title">&gt; EXPLORER PROFILE</div>
+      <div class="card-sub">// OPTIONAL — IMPROVES ANALYSIS ACCURACY</div>
+      <div class="ctx-grid">
+        <div class="ctx-field">
+          <label>[ AGE ]</label>
+          <input type="number" id="ctx-age" placeholder="e.g. 24" min="16" max="80"/>
+        </div>
+        <div class="ctx-field">
+          <label>[ BACKGROUND ]</label>
+          <input type="text" id="ctx-bg" placeholder="e.g. engineering student"/>
+        </div>
+        <div class="ctx-field">
+          <label>[ RISK LEVEL ]</label>
+          <select id="ctx-risk">
+            <option value="medium">MED — Balanced approach</option>
+            <option value="low">LOW — Prefer stability</option>
+            <option value="high">HIGH — Embrace risk</option>
+          </select>
+        </div>
+        <div class="ctx-field">
+          <label>[ FINANCIAL STATUS ]</label>
+          <select id="ctx-finance">
+            <option value="limited savings">Limited savings</option>
+            <option value="moderate savings">Moderate savings</option>
+            <option value="financially stable">Financially stable</option>
+            <option value="financially strong">Financially strong</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="runAnalysis()" disabled>
+      ▶ &nbsp;INITIALIZE AI ANALYSIS
+    </button>
+
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="page" id="loading">
+  <div class="ring-wrap">
+    <div class="ring"></div><div class="ring ring2"></div><div class="ring ring3"></div>
+    <div class="ring-icon">🤖</div>
+  </div>
+  <div class="load-title">AI Agents at Work</div>
+  <div class="load-sub">Running 7-stage multi-agent analysis...</div>
+  <div class="steps">
+    <div class="step" id="s0"><span>🧠</span><span class="step-label">Logic Agent analyzing...</span><span class="step-dot"></span></div>
+    <div class="step" id="s1"><span>💰</span><span class="step-label">Finance Agent calculating...</span><span class="step-dot"></span></div>
+    <div class="step" id="s2"><span>❤️</span><span class="step-label">Emotion Agent processing...</span><span class="step-dot"></span></div>
+    <div class="step" id="s3"><span>⚠️</span><span class="step-label">Risk Agent assessing...</span><span class="step-dot"></span></div>
+    <div class="step" id="s4"><span>💬</span><span class="step-label">Generating agent debate...</span><span class="step-dot"></span></div>
+    <div class="step" id="s5"><span>🔮</span><span class="step-label">Simulating 3-year outcomes...</span><span class="step-dot"></span></div>
+    <div class="step" id="s6"><span>🎯</span><span class="step-label">Final synthesis + action plan...</span><span class="step-dot"></span></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page" id="dashboard">
+  <div class="dash-inner">
+    <div class="dash-nav">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="nav-logo">LifeOS</span>
+        <span class="nav-decision" id="nav-decision"></span>
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" onclick="exportPlan()">⬇ Export</button>
+        <button class="icon-btn" onclick="showPage('input-page')">↺ New Decision</button>
+      </div>
+    </div>
+    <div class="emotion-strip" id="emotion-strip">
+      <div class="es-emoji" id="es-emoji"></div>
+      <div class="es-info"><div class="es-label">Emotional tone detected</div><div class="es-tone" id="es-tone"></div></div>
+      <div class="es-msg" id="es-msg"></div>
+    </div>
+    <div class="section-card" id="confidence-section"></div>
+    <div class="section-card" id="agents-section"></div>
+    <div class="section-card" id="synthesis-section"></div>
+    <div class="bottom-grid">
+      <div class="section-card" id="outcomes-section"></div>
+      <div class="section-card" id="action-section"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+let lastResult = null;
+
+/* ══ NAV ══ */
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ══ EMOTION ══ */
+const EMOTIONS=[
+  {re:/confused|unsure|don.?t know|not sure|lost|overwhelmed/i,label:'Confused',emoji:'😕',color:'#6366f1',tone:'Supportive mode',msg:'We\'ll guide you step by step.'},
+  {re:/scared|afraid|fear|anxious|worried|nervous/i,label:'Anxious',emoji:'😰',color:'#f59e0b',tone:'Reassuring mode',msg:'We\'ll focus on risk mitigation.'},
+  {re:/excited|thrilled|amazing|love|can.?t wait|pumped/i,label:'Excited',emoji:'🔥',color:'#10b981',tone:'Energizing mode',msg:'Let\'s channel that energy wisely.'},
+  {re:/stressed|pressure|overwhelmed|burnout/i,label:'Stressed',emoji:'😤',color:'#f43f5e',tone:'Calming mode',msg:'We\'ll break this into clear steps.'},
+  {re:/happy|confident|ready|sure|certain|positive/i,label:'Confident',emoji:'💪',color:'#06b6d4',tone:'Clarity mode',msg:'Great mindset — let\'s validate it.'},
+];
+function detectEmotion(t){for(const e of EMOTIONS)if(e.re.test(t))return e;return{label:'Neutral',emoji:'😐',color:'#64748b',tone:'Neutral tone',msg:'Balanced analysis incoming.'};}
+
+function setTpl(t){document.getElementById('decision-input').value=t;onInput();}
+function onInput(){
+  const val=document.getElementById('decision-input').value;
+  document.getElementById('char-count').textContent=val.length;
+  document.getElementById('submit-btn').disabled=val.trim().length<5;
+  const em=detectEmotion(val);
+  const dot=document.getElementById('emotion-dot'),txt=document.getElementById('emotion-live-text'),box=document.getElementById('emotion-live');
+  if(val.trim().length>3){dot.style.background=em.color;txt.textContent=`// ${em.emoji} ${em.label.toUpperCase()} DETECTED — ${em.msg}`;box.style.borderColor=em.color+'55';}
+  else{dot.style.background='#475569';txt.textContent='// AWAITING INPUT — EMOTION SCANNER READY';box.style.borderColor='';}
+}
+
+/* ══ LOADING ══ */
+function animateSteps(){
+  document.querySelectorAll('.step').forEach(s=>s.classList.remove('show','done'));
+  document.querySelectorAll('.step').forEach((s,i)=>setTimeout(()=>s.classList.add('show'),i*350));
+}
+function markDone(i){const s=document.getElementById('s'+i);if(s)s.classList.add('done');}
+function delay(ms){return new Promise(r=>setTimeout(r,ms));}
+
+/* ══ KEYWORD EXTRACTOR ══ */
+function extractKeywords(text){
+  const t=text.toLowerCase();
+  const topics={
+    career:   /job|career|startup|work|company|salary|promotion|boss|office|employ|business|entrepreneur/i,
+    finance:  /invest|money|savings|stock|real estate|property|loan|debt|income|financial|wealth|fund/i,
+    education:/degree|master|study|university|college|course|learn|skill|mba|phd|school|education/i,
+    relocation:/move|city|relocate|country|abroad|migrate|settle|place|location/i,
+    relationship:/marry|marriage|relationship|partner|family|divorce|love|dating/i,
+    health:   /health|fitness|diet|exercise|medical|doctor|surgery|mental|therapy/i,
+  };
+  for(const[k,re] of Object.entries(topics)) if(re.test(t)) return k;
+  return 'general';
+}
+
+function extractOptions(text){
+  const t=text.toLowerCase();
+  // Try to find "A or B" pattern
+  const orMatch=text.match(/(.+?)\s+or\s+(.+?)[\?\.]/i);
+  if(orMatch) return [orMatch[1].trim(), orMatch[2].trim()];
+  // Fallback based on topic
+  const topic=extractKeywords(text);
+  const defaults={
+    career:['Stay at current job','Start the startup'],
+    finance:['Invest in stocks','Buy real estate'],
+    education:['Pursue the degree','Gain work experience'],
+    relocation:['Move to the new city','Stay in current location'],
+    relationship:['Commit to the relationship','Take more time'],
+    health:['Start the health change','Maintain current routine'],
+    general:['Option A (safer path)','Option B (bolder path)'],
+  };
+  return defaults[topic]||defaults.general;
+}
+
+/* ══ MOCK AI ENGINE ══ */
+function generateAgents(decision, ctx, topic, opts){
+  const risk=ctx.risk_appetite||'medium';
+  const fin=ctx.financial_status||'moderate savings';
+  const age=parseInt(ctx.age)||25;
+  const [optA,optB]=opts;
+  return [
+    { key:'logic', name:'Logic Agent', emoji:'🧠', color:'#6366f1',
+      response:`• "${optA}" — stable, predictable, lower upside.\n• "${optB}" — higher variance, greater long-term potential.\n• At age ${age} with ${fin}, opportunity cost of inaction is real.\n• Short-term: "${optA}" wins. Long-term: "${optB}" likely outperforms.\n\nVerdict: If you have 12+ months runway, "${optB}" is the stronger logical choice.`
+    },
+    { key:'finance', name:'Finance Agent', emoji:'💰', color:'#10b981',
+      response:`"${optA}": Stable cash flow, preserves ${fin}, limited upside (~10%/yr).\n"${optB}": Potential 3-10x ROI, but needs 6-18 months runway. 60% face strain in year 1.\n\nVerdict: With ${fin}, "${optB}" only works with 12+ months buffer secured first.`
+    },
+    { key:'emotion', name:'Emotion Agent', emoji:'❤️', color:'#f43f5e',
+      response:`"${optA}": Security, routine, less stress — but risks long-term regret.\n"${optB}": Purpose, growth, ownership — but high stress during uncertainty.\n\nInsight: Which choice will you regret less in 10 years? That's your answer.`
+    },
+    { key:'risk', name:'Risk Agent', emoji:'⚠️', color:'#f59e0b',
+      response:`"${optB}" risks: execution gap, runway depletion, market timing.\n"${optA}" risks: stagnation, skill decay, organizational changes.\n\nWorst case "${optB}": capital gone at month 18, forced return.\nWorst case "${optA}": window closes in 5 years.\n\nRisk Level: ${risk==='low'?'Medium':'High'} — Mitigate with a 90-day pilot first.`
+    },
+  ];
+}
+
+function generateDebate(decision, opts){
+  const [optA,optB]=opts;
+  return [
+    {speaker:'Logic',  color:'#6366f1', msg:`"${optB}" has higher expected value over 3 years. Data beats emotion.`},
+    {speaker:'Emotion',color:'#f43f5e', msg:`Data ignores burnout. Emotional readiness determines execution quality.`},
+    {speaker:'Finance',color:'#10b981', msg:`Upside is real — but only with 12 months runway. Without it, "${optA}" first.`},
+    {speaker:'Risk',   color:'#f59e0b', msg:`70% underestimate year-one complexity. A 90-day pilot changes everything.`},
+    {speaker:'Logic',  color:'#6366f1', msg:`Agreed. Staged approach: validate "${optB}" while keeping "${optA}" income.`},
+    {speaker:'Emotion',color:'#f43f5e', msg:`That also builds confidence. Confidence directly impacts execution.`},
+  ];
+}
+
+function generateOutcomes(decision, opts, ctx){
+  const [optA,optB]=opts;
+  const topic=extractKeywords(decision);
+  const outcomes={
+    career:{
+      a:{sixMonths:`Settled in, performance review due, 8-12% raise likely`,oneYear:`Senior role, team of 2-3, comp up 15-20%`,threeYears:`Domain expert, strong network, income +30%`,best:`Fast-track to leadership`,worst:`Restructuring — role eliminated`},
+      b:{sixMonths:`MVP live, first users, early validation`,oneYear:`Product-market fit, small team, revenue covering costs`,threeYears:`Scaled ARR, team of 10+, funding interest`,best:`Acquisition or unicorn path`,worst:`Runway gone at month 14`},
+    },
+    finance:{
+      a:{sixMonths:`Portfolio +8-12%, compounding starts`,oneYear:`+15-20% returns, reinvestment active`,threeYears:`2x initial investment, passive income`,best:`Bull run — 3x returns`,worst:`-30% correction, recoverable`},
+      b:{sixMonths:`Property acquired, rental covers 40-60% EMI`,oneYear:`Yield 3-5%, appreciation begins`,threeYears:`Value +20-40%, equity built`,best:`Location goes prime, 2x value`,worst:`Vacancy + maintenance crunch`},
+    },
+    general:{
+      a:{sixMonths:`Adjusted, early results visible`,oneYear:`Momentum established`,threeYears:`Position strengthened, lessons learned`,best:`Exceeds expectations`,worst:`Slower than expected`},
+      b:{sixMonths:`Uncertain, signals mixed`,oneYear:`Traction or pivot needed`,threeYears:`Success or valuable experience`,best:`Life trajectory transformed`,worst:`Didn't work — but skills gained`},
+    },
+  };
+  const data=outcomes[topic]||outcomes.general;
+  return {
+    optionA:{label:`Path A: ${optA}`,sixMonths:data.a.sixMonths,oneYear:data.a.oneYear,threeYears:data.a.threeYears,bestCase:data.a.best,worstCase:data.a.worst,probability:55},
+    optionB:{label:`Path B: ${optB}`,sixMonths:data.b.sixMonths,oneYear:data.b.oneYear,threeYears:data.b.threeYears,bestCase:data.b.best,worstCase:data.b.worst,probability:45},
+  };
+}
+
+function generateSynthesis(decision, opts, ctx){
+  const [optA,optB]=opts;
+  const risk=ctx.risk_appetite||'medium';
+  const fin=ctx.financial_status||'moderate savings';
+  const isHighRisk=risk==='high';
+  const isLowFin=fin==='limited savings';
+  const recommended=isHighRisk&&!isLowFin?optB:isLowFin?optA:`Staged: keep "${optA}", validate "${optB}" in parallel`;
+  return {
+    recommendedChoice:recommended,
+    why:[
+      `Matches your risk appetite (${risk}) and financial status (${fin})`,
+      `Preserves optionality — course-correct within 6 months if needed`,
+      `Logic + Finance agents converge on this when your context is applied`,
+    ],
+    caution:isLowFin?`Secure 6 months of expenses before any major transition.`:null,
+  };
+}
+
+function generateConfidence(decision, ctx, topic){
+  const risk=ctx.risk_appetite||'medium';
+  const fin=ctx.financial_status||'moderate savings';
+  const scores={low:62,medium:71,high:78};
+  const score=scores[risk]||71;
+  return {
+    confidence:score,
+    riskLevel:{low:'Low',medium:'Medium',high:'High'}[risk]||'Medium',
+    consensus:`All agents agree: preparation and a clear timeline matter most.`,
+    disagreement:`Logic/Finance favor higher upside; Emotion/Risk prefer a staged transition.`,
+    recommendation:`With ${fin} and ${risk} risk appetite, a staged approach maximizes upside while protecting downside. Set a 90-day validation window before committing fully.`,
+  };
+}
+
+function generateActionPlan(decision, opts, topic){
+  const plans={
+    career:{
+      week1:{title:'Week 1: Clarity',tasks:['List your 3 non-negotiables','Talk to 1 person who made a similar choice','Calculate your financial runway today']},
+      week2:{title:'Week 2: Validate',tasks:['Run a 5-day evening pilot on the alternative','Have 2 honest mentor conversations','Write a 1-page decision brief']},
+      week3:{title:'Week 3: Commit',tasks:['Set a hard deadline — decide by Friday','Write your 90-day plan','Tell someone — accountability matters']},
+      nextSteps:`Execute the 90-day plan. Review with real data at the 90-day mark.`,
+    },
+    finance:{
+      week1:{title:'Week 1: Audit',tasks:['Calculate net worth + monthly burn','Research both options with real numbers','Talk to one experienced investor']},
+      week2:{title:'Week 2: Model',tasks:['Run best/base/worst case scenarios','Find your "sleep at night" minimum','Check tax implications']},
+      week3:{title:'Week 3: Execute',tasks:['Open accounts or make first move','Set up tracking','Schedule 3-month review']},
+      nextSteps:`Review quarterly. Stay the course for 12 months before major changes.`,
+    },
+    general:{
+      week1:{title:'Week 1: Clarity',tasks:['Define success in 3 years for each option','Name your top 3 fears — are they rational?','Talk to someone who\'s been there']},
+      week2:{title:'Week 2: Test',tasks:['Take one small action toward each option','Note how each made you feel','Remove one blocker']},
+      week3:{title:'Week 3: Commit',tasks:['Decide and write it down','Build a 30-60-90 day plan','Share with your accountability partner']},
+      nextSteps:`Start small on day 1. Revisit at 90 days with honest reflection.`,
+    },
+  };
+  const p=plans[topic]||plans.general;
+  return {week1:p.week1,week2:p.week2,week3:p.week3,nextSteps:p.nextSteps};
+}
+
+/* ══ MAIN RUN ══ */
+async function runAnalysis(){
+  const decision=document.getElementById('decision-input').value.trim();
+  if(decision.length<5)return;
+  const ctx={
+    age:document.getElementById('ctx-age').value||'25',
+    background:document.getElementById('ctx-bg').value||'professional',
+    risk_appetite:document.getElementById('ctx-risk').value||'medium',
+    financial_status:document.getElementById('ctx-finance').value||'moderate savings',
+  };
+  showPage('loading');
+  animateSteps();
+
+  const topic=extractKeywords(decision);
+  const opts=extractOptions(decision);
+
+  // Simulate processing with staggered delays
+  await delay(400);  markDone(0);
+  await delay(350);  markDone(1);
+  await delay(300);  markDone(2);
+  await delay(350);  markDone(3);
+  await delay(400);  markDone(4);
+  await delay(350);  markDone(5);
+  await delay(300);  markDone(6);
+  await delay(300);
+
+  lastResult={
+    decision, ctx,
+    emotion:    detectEmotion(decision),
+    agents:     generateAgents(decision,ctx,topic,opts),
+    debate:     generateDebate(decision,opts),
+    outcomes:   generateOutcomes(decision,opts,ctx),
+    synthesis:  generateSynthesis(decision,opts,ctx),
+    actionPlan: generateActionPlan(decision,opts,topic),
+    confidence: generateConfidence(decision,ctx,topic),
+  };
+
+  renderDashboard(lastResult);
+  showPage('dashboard');
+}
+
+/* ══ RENDER ══ */
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function renderDashboard(d){
+  document.getElementById('nav-decision').textContent=`"${d.decision}"`;
+  const em=d.emotion;
+  document.getElementById('es-emoji').textContent=em.emoji;
+  document.getElementById('es-tone').textContent=em.tone;
+  document.getElementById('es-tone').style.color=em.color;
+  document.getElementById('es-msg').textContent=em.msg;
+  document.getElementById('emotion-strip').style.borderColor=em.color+'40';
+  renderConfidence(d.confidence);
+  renderAgents(d.agents,d.debate);
+  renderSynthesis(d.synthesis);
+  renderOutcomes(d.outcomes);
+  renderActionPlan(d.actionPlan);
+}
+
+function renderConfidence(c){
+  const RC={Low:'#10b981',Medium:'#f59e0b',High:'#f43f5e',Critical:'#dc2626'};
+  const bc=c.confidence>=75?'#10b981':c.confidence>=50?'#6366f1':c.confidence>=30?'#f59e0b':'#f43f5e';
+  const rc=RC[c.riskLevel]||'#f59e0b';
+  document.getElementById('confidence-section').innerHTML=`
+    <div class="sec-hdr"><span class="sec-icon">🛡️</span><div class="sec-title">Confidence & Risk Analysis</div></div>
+    <div class="conf-top">
+      <div>
+        <div class="score-row"><span class="score-lbl">AI Confidence Score</span><span class="score-val" style="color:${bc}">${c.confidence}%</span></div>
+        <div class="bar-track"><div class="bar-fill" id="conf-bar" style="background:${bc}"></div></div>
+        <div class="bar-labels"><span>Uncertain</span><span>Highly Confident</span></div>
+      </div>
+      <div class="risk-badge" style="background:${rc}15;border-color:${rc}45">
+        <div class="risk-badge-lbl">Risk Level</div>
+        <div class="risk-badge-val" style="color:${rc}">${esc(c.riskLevel)}</div>
+      </div>
+    </div>
+    <div class="conf-cards">
+      <div class="conf-card"><div class="conf-card-hdr">✅ Agents Agree On</div><div class="conf-card-text">${esc(c.consensus)}</div></div>
+      <div class="conf-card"><div class="conf-card-hdr">⚡ Key Disagreement</div><div class="conf-card-text">${esc(c.disagreement)}</div></div>
+    </div>
+    <div class="rec-box"><div class="rec-lbl">Final Recommendation</div><div class="rec-text">${esc(c.recommendation)}</div></div>`;
+  setTimeout(()=>{document.getElementById('conf-bar').style.width=c.confidence+'%';},120);
+}
+
+function renderAgents(agents,debate){
+  const cards=agents.map(a=>`
+    <div class="agent-card" style="--ac:${a.color}" onclick="this.classList.toggle('open')">
+      <div class="agent-hdr">
+        <div class="agent-info"><div class="agent-dot" style="background:${a.color}"></div>
+          <span style="font-size:18px">${a.emoji}</span><span class="agent-name">${esc(a.name)}</span></div>
+        <span class="agent-chevron">▼</span>
+      </div>
+      <div class="agent-preview">${esc(a.response.slice(0,120))}...</div>
+      <div class="agent-full">${esc(a.response)}</div>
+    </div>`).join('');
+  const debateHTML=debate.map(l=>`
+    <div class="debate-line">
+      <span class="debate-speaker" style="background:${l.color}22;color:${l.color};border:1px solid ${l.color}44">${esc(l.speaker)}</span>
+      <span class="debate-msg">${esc(l.msg)}</span>
+    </div>`).join('');
+  document.getElementById('agents-section').innerHTML=`
+    <div class="sec-hdr"><span class="sec-icon">💬</span><div class="sec-title">Multi-Agent Debate</div><span class="pill">${agents.length} agents</span></div>
+    <div class="agents-grid">${cards}</div>
+    <div class="debate-box"><div class="debate-title">⚡ Live Agent Debate — Where They Disagree</div>${debateHTML}</div>`;
+}
+
+function renderSynthesis(s){
+  const whyHTML=(s.why||[]).map(w=>`<div class="synth-why-item"><span class="synth-bullet">›</span><span>${esc(w)}</span></div>`).join('');
+  const cautionHTML=s.caution?`<div class="synth-caution">⚠️ Caution: ${esc(s.caution)}</div>`:'';
+  document.getElementById('synthesis-section').innerHTML=`
+    <div class="sec-hdr"><span class="sec-icon">🎯</span><div class="sec-title">Final Decision Synthesis</div></div>
+    <div class="synthesis-box">
+      <div class="synth-choice">Recommended: ${esc(s.recommendedChoice)}</div>
+      <div class="synth-why">${whyHTML}</div>${cautionHTML}
+    </div>`;
+}
+
+function renderOutcomes(o){
+  document.getElementById('outcomes-section').innerHTML=`
+    <div class="sec-hdr"><span class="sec-icon">🔮</span><div class="sec-title">3-Year Outcome Simulator</div></div>
+    <div class="outcomes-grid">${buildPath(o.optionA,'#10b981')}${buildPath(o.optionB,'#f59e0b')}</div>`;
+}
+
+function buildPath(opt,color){
+  const periods=[{label:'6 Months',val:opt.sixMonths},{label:'1 Year',val:opt.oneYear},{label:'3 Years',val:opt.threeYears}];
+  const tlHTML=periods.map((p,i)=>`
+    <div class="tl-row">
+      <div class="tl-spine">
+        <div class="tl-dot" style="background:${color};border-color:${color}"></div>
+        ${i<2?`<div class="tl-line" style="background:${color}"></div>`:''}
+      </div>
+      <div class="tl-body"><div class="tl-period" style="color:${color}">${p.label}</div><div class="tl-text">${esc(p.val||'')}</div></div>
+    </div>`).join('');
+  return `
+    <div class="path-card" style="background:${color}0c;border-color:${color}38">
+      <div class="path-hdr">
+        <span class="path-type" style="color:${color};border-color:${color}45;background:${color}18">${esc(opt.label)}</span>
+        <span class="path-prob" style="color:${color}">${opt.probability}%</span>
+      </div>
+      <div class="tl">${tlHTML}</div>
+      <div class="cases">
+        <div class="case-row"><span>📈</span><div><div class="case-lbl">Best Case</div><div class="case-text">${esc(opt.bestCase)}</div></div></div>
+        <div class="case-row"><span>📉</span><div><div class="case-lbl">Worst Case</div><div class="case-text">${esc(opt.worstCase)}</div></div></div>
+      </div>
+    </div>`;
+}
+
+function renderActionPlan(plan){
+  const colors=['#6366f1','#8b5cf6','#a78bfa'];
+  const weeks=[plan.week1,plan.week2,plan.week3].filter(Boolean);
+  const html=weeks.map((w,i)=>`
+    <div class="week-card" style="border-left-color:${colors[i]}">
+      <div class="week-title" style="color:${colors[i]}">${esc(w.title)}</div>
+      <ul class="task-list">${(w.tasks||[]).map(t=>`<li class="task-item"><span class="task-dot" style="background:${colors[i]}"></span>${esc(t)}</li>`).join('')}</ul>
+    </div>`).join('');
+  const nextHTML=plan.nextSteps?`<div class="next-steps"><div class="next-steps-lbl">Next Steps</div>${esc(plan.nextSteps)}</div>`:'';
+  document.getElementById('action-section').innerHTML=`
+    <div class="sec-hdr"><span class="sec-icon">📋</span><div class="sec-title">3-Week Action Plan</div>
+      <button class="copy-btn" onclick="copyPlan()">📋 Copy</button></div>
+    <div class="weeks">${html}</div>${nextHTML}`;
+}
+
+/* ══ COPY / EXPORT ══ */
+function copyPlan(){
+  if(!lastResult)return;
+  const text=[lastResult.actionPlan.week1,lastResult.actionPlan.week2,lastResult.actionPlan.week3]
+    .filter(Boolean).map(w=>`${w.title}\n${w.tasks.map(t=>`• ${t}`).join('\n')}`).join('\n\n');
+  navigator.clipboard.writeText(text).then(()=>{
+    const b=document.querySelector('.copy-btn');
+    if(b){b.textContent='✅ Copied!';setTimeout(()=>b.textContent='📋 Copy',2000);}
+  });
+}
+
+function exportPlan(){
+  if(!lastResult)return;
+  const d=lastResult;
+  const lines=[
+    'LIFEOS DECISION ANALYSIS','========================',
+    `Decision: ${d.decision}`,`Context: Age ${d.ctx.age}, ${d.ctx.background}, Risk: ${d.ctx.risk_appetite}, Finance: ${d.ctx.financial_status}`,'',
+    `Confidence: ${d.confidence.confidence}% | Risk: ${d.confidence.riskLevel}`,`Recommendation: ${d.confidence.recommendation}`,'',
+    'AGENT PERSPECTIVES','------------------',
+    ...d.agents.map(a=>`${a.emoji} ${a.name}:\n${a.response}\n`),
+    'FINAL SYNTHESIS','---------------',
+    `Recommended: ${d.synthesis.recommendedChoice}`,
+    ...(d.synthesis.why||[]).map(w=>`• ${w}`),
+    d.synthesis.caution?`Caution: ${d.synthesis.caution}`:'','',
+    '3-YEAR OUTCOMES','---------------',
+    `${d.outcomes.optionA.label} (${d.outcomes.optionA.probability}%)`,
+    `  6mo: ${d.outcomes.optionA.sixMonths}`,`  1yr: ${d.outcomes.optionA.oneYear}`,`  3yr: ${d.outcomes.optionA.threeYears}`,'',
+    `${d.outcomes.optionB.label} (${d.outcomes.optionB.probability}%)`,
+    `  6mo: ${d.outcomes.optionB.sixMonths}`,`  1yr: ${d.outcomes.optionB.oneYear}`,`  3yr: ${d.outcomes.optionB.threeYears}`,'',
+    'ACTION PLAN','-----------',
+    ...[d.actionPlan.week1,d.actionPlan.week2,d.actionPlan.week3].filter(Boolean)
+      .map(w=>`${w.title}\n${w.tasks.map(t=>`• ${t}`).join('\n')}`),
+    `\nNext Steps:\n${d.actionPlan.nextSteps||''}`
+  ];
+  const blob=new Blob([lines.join('\n')],{type:'text/plain'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='lifeos-analysis.txt';a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ══════════════════════════════════════════════
+   CHATBOT ENGINE — AI POWERED
+══════════════════════════════════════════════ */
+const chatHistory = [];
+let chatApiKey = ''; // separate from main API_KEY, user can set independently
+
+/* Build system prompt with full decision context */
+function buildSystemPrompt() {
+  const base = `You are LifeOS Assistant — a sharp, friendly AI decision coach embedded in the LifeOS decision intelligence app.
+You help users think through life decisions: career, finance, relationships, education, relocation, and more.
+Be concise, direct, and warm. Use bullet points when listing things. Keep replies under 150 words unless the user asks for detail.
+Never say "I'm just an AI" — just answer helpfully and confidently.`;
+
+  if (!lastResult) return base;
+
+  const d = lastResult;
+  return `${base}
+
+CURRENT DECISION CONTEXT:
+Decision: "${d.decision}"
+User profile: Age ${d.ctx.age}, ${d.ctx.background}, Risk appetite: ${d.ctx.risk_appetite}, Financial status: ${d.ctx.financial_status}
+Emotion detected: ${d.emotion.label}
+
+AGENT VERDICTS:
+- Logic: ${d.agents.find(a=>a.key==='logic')?.response.split('\n').slice(-1)[0] || ''}
+- Finance: ${d.agents.find(a=>a.key==='finance')?.response.split('\n').slice(-1)[0] || ''}
+- Emotion: ${d.agents.find(a=>a.key==='emotion')?.response.split('\n').slice(-1)[0] || ''}
+- Risk: ${d.agents.find(a=>a.key==='risk')?.response.split('\n').slice(-1)[0] || ''}
+
+RECOMMENDATION: ${d.synthesis.recommendedChoice}
+CONFIDENCE: ${d.confidence.confidence}% | RISK LEVEL: ${d.confidence.riskLevel}
+KEY DISAGREEMENT: ${d.confidence.disagreement}
+
+Answer questions about this decision using the above context. If asked something unrelated to the decision, answer it as a general knowledgeable assistant.`;
+}
+
+/* Call OpenAI with full conversation history */
+async function callChatAI(userMessage) {
+  const key = chatApiKey || (typeof API_KEY !== 'undefined' ? API_KEY : '');
+  if (!key) throw new Error('NO_KEY');
+
+  // Keep last 10 messages for context
+  const recentHistory = chatHistory.slice(-10).map(m => ({
+    role: m.role === 'bot' ? 'assistant' : 'user',
+    content: m.text
+  }));
+
+  const res = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+    body: JSON.stringify({
+      model: 'gpt-4o-mini',
+      messages: [
+        { role: 'system', content: buildSystemPrompt() },
+        ...recentHistory,
+        { role: 'user', content: userMessage }
+      ],
+      temperature: 0.7,
+      max_tokens: 300
+    })
+  });
+  if (!res.ok) {
+    const e = await res.json().catch(() => ({}));
+    throw new Error(e.error?.message || 'API error ' + res.status);
+  }
+  return (await res.json()).choices[0].message.content;
+}
+
+/* Local KB — instant answers for common questions without API */
+function localReply(input) {
+  const t = input.toLowerCase();
+
+  if (/^(hi|hello|hey|sup|yo)\b/i.test(input))
+    return `Hey! 👋 I'm your LifeOS Assistant — ask me anything. Decision advice, life questions, or just thinking out loud. I've got you.`;
+
+  if (/\b(recommend|should i|best choice|which one|verdict)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first and I'll give you a clear recommendation.`;
+    const s = lastResult.synthesis;
+    return `Recommendation: ${s.recommendedChoice}\n\n${(s.why||[]).map(w=>`• ${w}`).join('\n')}${s.caution ? `\n\n⚠️ ${s.caution}` : ''}`;
+  }
+  if (/\b(risk|danger|worst|fail)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first and I'll break down the risks.`;
+    return lastResult.agents.find(a=>a.key==='risk')?.response || 'No risk data.';
+  }
+  if (/\b(financ|money|cost|salary|invest|budget)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first for the financial breakdown.`;
+    return lastResult.agents.find(a=>a.key==='finance')?.response || 'No finance data.';
+  }
+  if (/\b(feel|emotion|stress|happy|anxious|burnout)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first for the emotional perspective.`;
+    return lastResult.agents.find(a=>a.key==='emotion')?.response || 'No emotion data.';
+  }
+  if (/\b(action|plan|week|steps|how to start)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first and I'll show your action plan.`;
+    const p = lastResult.actionPlan;
+    return `${p.week1?.title}\n${(p.week1?.tasks||[]).map(t=>`• ${t}`).join('\n')}\n\n${p.week2?.title}\n${(p.week2?.tasks||[]).map(t=>`• ${t}`).join('\n')}\n\n${p.week3?.title}\n${(p.week3?.tasks||[]).map(t=>`• ${t}`).join('\n')}`;
+  }
+  if (/\b(outcome|future|year|scenario|simulation)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first to see the outcome simulation.`;
+    const o = lastResult.outcomes;
+    return `${o.optionA.label} (${o.optionA.probability}%)\n• 6mo: ${o.optionA.sixMonths}\n• 1yr: ${o.optionA.oneYear}\n• 3yr: ${o.optionA.threeYears}\n\n${o.optionB.label} (${o.optionB.probability}%)\n• 6mo: ${o.optionB.sixMonths}\n• 1yr: ${o.optionB.oneYear}\n• 3yr: ${o.optionB.threeYears}`;
+  }
+  if (/\b(confidence|score|percent|how sure)\b/i.test(t)) {
+    if (!lastResult) return `Run an analysis first to see the confidence score.`;
+    const c = lastResult.confidence;
+    return `Confidence: ${c.confidence}% | Risk: ${c.riskLevel}\n\n${c.recommendation}`;
+  }
+  if (/\b(help|what can you|capabilities)\b/i.test(t))
+    return `I can answer anything — decision advice, life questions, career, finance, relationships, or just general knowledge. Ask away!\n\nWith an OpenAI key set, I use GPT-4o-mini for full AI answers. Without one, I use smart local responses.`;
+  if (/\b(thank|thanks|great|awesome|perfect)\b/i.test(t))
+    return `You've got this. 🙌 The best decision is the one you actually execute.`;
+
+  return null; // signal to try AI
+}
+
+/* Main reply handler — tries AI first, falls back to local */
+async function chatbotReply(input) {
+  // Try local KB first for instant common answers
+  const local = localReply(input);
+
+  // Try AI
+  try {
+    const aiReply = await callChatAI(input);
+    return aiReply;
+  } catch (err) {
+    if (err.message === 'NO_KEY') {
+      // No key — use local if available, else prompt to set key
+      if (local) return local;
+      return `I can answer that better with an AI key! Tap "Set AI Key" below to enable full answers, or ask me about your decision analysis — I can answer those without a key.`;
+    }
+    // API error — fall back to local
+    if (local) return local + '\n\n_(AI unavailable — showing local analysis)_';
+    return `Something went wrong with the AI (${err.message}). Try again or ask about your decision analysis — I can answer those locally.`;
+  }
+}
+
+/* ══ CHAT UI — injected into body ══ */
+function buildChatUI() {
+  if (document.getElementById('chat-fab')) return; // already built
+  document.body.insertAdjacentHTML('beforeend', `
+  <button id="chat-fab" onclick="toggleChat()"
+    style="position:fixed;bottom:28px;right:28px;z-index:500;width:56px;height:56px;border-radius:50%;
+      background:linear-gradient(135deg,#6366f1,#8b5cf6);border:none;cursor:pointer;
+      box-shadow:0 8px 32px rgba(99,102,241,.5);display:flex;align-items:center;justify-content:center;
+      font-size:22px;transition:transform .2s,box-shadow .2s;position:fixed">
+    💬
+    <span id="chat-badge" style="position:absolute;top:0;right:0;width:16px;height:16px;
+      background:#f43f5e;border-radius:50%;font-size:9px;color:#fff;display:flex;
+      align-items:center;justify-content:center;font-weight:700;pointer-events:none">1</span>
+  </button>
+
+  <div id="chat-panel" style="display:none;position:fixed;bottom:96px;right:28px;z-index:500;
+    width:360px;max-width:calc(100vw - 40px);height:500px;background:#0d1117;
+    border:1px solid rgba(99,102,241,.3);border-radius:20px;flex-direction:column;
+    box-shadow:0 24px 80px rgba(0,0,0,.7);overflow:hidden">
+
+    <div style="background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));
+      border-bottom:1px solid rgba(99,102,241,.2);padding:16px 18px;display:flex;align-items:center;gap:10px;flex-shrink:0">
+      <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+        display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">🤖</div>
+      <div style="flex:1">
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.95rem;color:#f1f5f9">LifeOS Assistant</div>
+        <div style="font-size:.72rem;color:#10b981;display:flex;align-items:center;gap:4px">
+          <span style="width:6px;height:6px;border-radius:50%;background:#10b981;display:inline-block;flex-shrink:0"></span>Always online
+        </div>
+      </div>
+      <button onclick="toggleChat()" style="background:none;border:none;color:#64748b;cursor:pointer;font-size:22px;padding:4px;line-height:1;flex-shrink:0">×</button>
+    </div>
+
+    <!-- AI Key row -->
+    <div id="chat-key-row" style="padding:8px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;align-items:center;gap:8px;flex-shrink:0">
+      <span id="chat-key-status" style="font-size:.7rem;font-family:monospace;flex:1;color:#64748b">AI: local mode</span>
+      <button onclick="setChatKey()" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.25);border-radius:6px;padding:4px 10px;font-size:.7rem;color:#a5b4fc;cursor:pointer;font-family:Inter,sans-serif;white-space:nowrap">🔑 Set AI Key</button>
+    </div>
+
+    <div style="padding:10px 14px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;gap:6px;flex-wrap:wrap;flex-shrink:0">
+      <button onclick="quickAsk('What do you recommend?')" style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#a5b4fc;cursor:pointer;font-family:Inter,sans-serif">🎯 Recommend</button>
+      <button onclick="quickAsk('What are the main risks?')" style="background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#fbbf24;cursor:pointer;font-family:Inter,sans-serif">⚠️ Risks</button>
+      <button onclick="quickAsk('Show me the action plan')" style="background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#34d399;cursor:pointer;font-family:Inter,sans-serif">📋 Plan</button>
+      <button onclick="quickAsk('What happens in 3 years?')" style="background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.2);border-radius:20px;padding:4px 10px;font-size:.72rem;color:#c4b5fd;cursor:pointer;font-family:Inter,sans-serif">🔮 Outcomes</button>
+    </div>
+
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:0"></div>
+
+    <div style="padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;gap:8px;align-items:flex-end;flex-shrink:0">
+      <textarea id="chat-input" rows="1"
+        onkeydown="chatKeydown(event)"
+        oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,80)+'px'"
+        placeholder="Ask anything about your decision..."
+        style="flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.09);border-radius:10px;
+          padding:9px 12px;color:#e2e8f0;font-size:.83rem;outline:none;resize:none;
+          font-family:Inter,sans-serif;line-height:1.5;max-height:80px;transition:border-color .2s"></textarea>
+      <button onclick="sendChat()"
+        style="width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+          border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+          font-size:15px;flex-shrink:0">➤</button>
+    </div>
+  </div>`);
+}
+
+function toggleChat() {
+  buildChatUI();
+  const badge = document.getElementById('chat-badge');
+  const panel = document.getElementById('chat-panel');
+  const isOpen = panel.style.display === 'flex';
+  panel.style.display = isOpen ? 'none' : 'flex';
+  if (badge) badge.style.display = 'none';
+  if (!isOpen && chatHistory.length === 0) {
+    const greeting = lastResult
+      ? `Hey! 👋 I've analyzed your decision:\n"${lastResult.decision.slice(0,70)}..."\n\nAsk me anything — risks, finances, outcomes, action plan, or what I recommend.`
+      : `Hey! 👋 I'm your LifeOS Assistant.\n\nRun an analysis first, then I can answer specific questions about your decision. Or ask me about decision frameworks, timing, or how LifeOS works!`;
+    addBotMessage(greeting);
+  }
+}
+
+function addBotMessage(text) {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:8px;align-items:flex-start;margin-bottom:14px';
+  div.innerHTML = `
+    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">🤖</div>
+    <div style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);
+      border-radius:0 12px 12px 12px;padding:11px 14px;font-size:.83rem;color:#c7d2fe;
+      line-height:1.7;max-width:85%;white-space:pre-wrap;word-break:break-word">${esc(text)}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({role:'bot', text});
+}
+
+function addUserMessage(text) {
+  const msgs = document.getElementById('chat-messages');
+  if (!msgs) return;
+  const div = document.createElement('div');
+  div.style.cssText = 'display:flex;gap:8px;align-items:flex-start;justify-content:flex-end;margin-bottom:14px';
+  div.innerHTML = `
+    <div style="background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+      border-radius:12px 0 12px 12px;padding:11px 14px;font-size:.83rem;color:#e2e8f0;
+      line-height:1.7;max-width:85%;word-break:break-word">${esc(text)}</div>
+    <div style="width:28px;height:28px;border-radius:50%;background:rgba(255,255,255,.08);
+      display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">👤</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  chatHistory.push({role:'user', text});
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  input.style.height = 'auto';
+  addUserMessage(text);
+  const msgs = document.getElementById('chat-messages');
+  const typing = document.createElement('div');
+  typing.id = 'typing-indicator';
+  typing.style.cssText = 'display:flex;gap:8px;align-items:center;margin-bottom:14px';
+  typing.innerHTML = `
+    <div style="width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#6366f1,#8b5cf6);
+      display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0">🤖</div>
+    <div style="background:rgba(99,102,241,.1);border:1px solid rgba(99,102,241,.2);
+      border-radius:0 12px 12px 12px;padding:11px 14px;display:flex;gap:5px;align-items:center">
+      <span style="width:7px;height:7px;border-radius:50%;background:#6366f1;display:inline-block;animation:pulse .8s infinite"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:#6366f1;display:inline-block;animation:pulse .8s .25s infinite"></span>
+      <span style="width:7px;height:7px;border-radius:50%;background:#6366f1;display:inline-block;animation:pulse .8s .5s infinite"></span>
+    </div>`;
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  // chatbotReply is now async
+  chatbotReply(text).then(reply => {
+    const t = document.getElementById('typing-indicator');
+    if (t) t.remove();
+    addBotMessage(reply);
+  }).catch(() => {
+    const t = document.getElementById('typing-indicator');
+    if (t) t.remove();
+    addBotMessage('Something went wrong. Try again!');
+  });
+}
+
+function chatKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); }
+}
+
+function setChatKey() {
+  const k = prompt('Paste your OpenAI API key (sk-...):\n\nThis enables full AI answers for any question.');
+  if (!k) return;
+  chatApiKey = k.trim();
+  const status = document.getElementById('chat-key-status');
+  if (status) {
+    status.textContent = 'AI: GPT-4o-mini ✓';
+    status.style.color = '#10b981';
+  }
+  addBotMessage('AI key set! 🚀 I can now answer anything — ask me any question, on any topic.');
+}
+
+function quickAsk(q) {
+  buildChatUI();
+  const panel = document.getElementById('chat-panel');
+  panel.style.display = 'flex';
+  const badge = document.getElementById('chat-badge');
+  if (badge) badge.style.display = 'none';
+  if (chatHistory.length === 0) {
+    addBotMessage(lastResult ? `Hey! 👋 I've analyzed your decision. Ask me anything!` : `Hey! 👋 I'm your LifeOS Assistant. Ask me anything!`);
+  }
+  addUserMessage(q);
+  chatbotReply(q).then(r => addBotMessage(r)).catch(() => addBotMessage('Try again!'));
+}
+
+/* ══ GAMER PARTICLES + CHAT INIT ══ */
+window.addEventListener('DOMContentLoaded', () => {
+  // Always build the chat button on load so it's visible immediately
+  buildChatUI();
+
+  const container = document.getElementById('game-particles');
+  if (!container) return;
+  const colors = ['rgba(0,255,128,.7)','rgba(0,200,255,.6)','rgba(0,255,200,.5)','rgba(100,255,150,.4)'];
+  for (let i = 0; i < 35; i++) {
+    const span = document.createElement('span');
+    const size = Math.random() * 3 + 1;
+    span.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;
+      animation-duration:${5+Math.random()*12}s;animation-delay:${Math.random()*10}s;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      box-shadow:0 0 ${size*3}px ${colors[0]};`;
+    container.appendChild(span);
+  }
+});
+</script>
+</body>
+</html>
