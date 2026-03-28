@@ -4,6 +4,12 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>LifeOS — Decision Intelligence</title>
+<!-- Auth guard — redirect immediately if no session -->
+<script>
+  if (!localStorage.getItem('lifeos_user')) {
+    window.location.replace('login.html');
+  }
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
 <style>
@@ -947,19 +953,20 @@ let lastResult = null;
 let currentUser = null;
 
 function initAuth() {
+  // Always check — never trust a stale session silently
   const saved = localStorage.getItem('lifeos_user');
-  if (saved) {
-    try {
-      currentUser = JSON.parse(saved);
-      showPage('hero');
-    } catch(e) {
-      localStorage.removeItem('lifeos_user');
-      showPage('login-page');
-    }
-  } else {
-    showPage('login-page');
+  if (!saved) {
+    window.location.replace('login.html');
+    return;
   }
-  startLoginAnimations();
+  try {
+    currentUser = JSON.parse(saved);
+    if (!currentUser || !currentUser.username) throw new Error('bad session');
+    showPage('hero');
+  } catch(e) {
+    localStorage.removeItem('lifeos_user');
+    window.location.replace('login.html');
+  }
 }
 
 function startLoginAnimations() {
@@ -1074,7 +1081,7 @@ function guestLogin() {
 function logout() {
   localStorage.removeItem('lifeos_user');
   currentUser = null;
-  showPage('login-page');
+  window.location.href = 'login.html';
 }
 
 // Run auth check on load — single consolidated init

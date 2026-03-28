@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>LifeOS — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{background:#000;color:#e2e8f0;font-family:'Share Tech Mono',monospace;min-height:100vh;overflow:hidden}
+
+/* Grid background */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:linear-gradient(rgba(0,255,128,.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(0,255,128,.022) 1px,transparent 1px);
+  background-size:44px 44px;animation:gridMove 12s linear infinite;
+}
+/* Scanlines */
+body::after{
+  content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.06) 3px,rgba(0,0,0,.06) 4px);
+}
+@keyframes gridMove{from{background-position:0 0}to{background-position:44px 44px}}
+
+/* Neon orbs */
+.orb{position:fixed;border-radius:50%;pointer-events:none;z-index:0}
+.orb1{top:-10%;left:-5%;width:500px;height:500px;background:radial-gradient(circle,rgba(0,255,128,.09) 0%,transparent 70%)}
+.orb2{bottom:-10%;right:-5%;width:400px;height:400px;background:radial-gradient(circle,rgba(0,200,255,.07) 0%,transparent 70%)}
+
+/* Floating particles */
+#particles{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+#particles span{position:absolute;border-radius:50%;animation:floatUp linear infinite}
+@keyframes floatUp{0%{transform:translateY(100vh);opacity:0}10%{opacity:1}90%{opacity:.5}100%{transform:translateY(-5vh);opacity:0}}
+
+/* Layout */
+.layout{display:flex;min-height:100vh;position:relative;z-index:2}
+
+/* ── LEFT PANEL ── */
+.left{
+  flex:1;display:flex;flex-direction:column;justify-content:center;
+  padding:60px 52px;border-right:1px solid rgba(0,255,128,.08);
+  position:relative;
+}
+@media(max-width:800px){.left{display:none}}
+/* HUD corners */
+.left::before{content:'';position:absolute;top:28px;left:28px;width:36px;height:36px;border-top:2px solid rgba(0,255,128,.35);border-left:2px solid rgba(0,255,128,.35)}
+.left::after{content:'';position:absolute;bottom:28px;right:28px;width:36px;height:36px;border-bottom:2px solid rgba(0,255,128,.35);border-right:2px solid rgba(0,255,128,.35)}
+
+.brand-title{
+  font-family:'Orbitron',sans-serif;font-size:3.4rem;font-weight:900;
+  color:#00ff80;text-transform:uppercase;letter-spacing:.1em;line-height:1;
+  text-shadow:0 0 40px rgba(0,255,128,.55),0 0 80px rgba(0,255,128,.2);
+  margin-bottom:8px;
+}
+.brand-sub{font-size:.72rem;color:rgba(0,255,128,.4);letter-spacing:.1em;margin-bottom:44px}
+
+/* Terminal */
+.terminal{
+  background:rgba(0,12,6,.85);border:1px solid rgba(0,255,128,.14);
+  border-radius:4px;padding:18px 20px;margin-bottom:32px;
+}
+.term-bar{display:flex;align-items:center;gap:7px;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid rgba(0,255,128,.08)}
+.td{width:9px;height:9px;border-radius:50%}
+.tr{background:#f43f5e}.ty{background:#f59e0b}.tg{background:#00ff80}
+.term-bar span{font-size:.62rem;color:rgba(0,255,128,.25);margin-left:6px}
+.tline{font-size:.74rem;color:rgba(0,255,128,.5);line-height:1.9}
+.tline b{color:#00ff80}
+.tline.cyan{color:#00c8ff}
+#tw{color:#00c8ff}
+.blink{animation:blink .7s step-end infinite;color:#00ff80}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:32px}
+.stat{
+  background:rgba(0,255,128,.04);border:1px solid rgba(0,255,128,.1);
+  border-radius:4px;padding:14px;text-align:center;position:relative;overflow:hidden;
+}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,#00ff80,transparent)}
+.stat-val{font-family:'Orbitron',sans-serif;font-size:1.5rem;font-weight:700;color:#00ff80;text-shadow:0 0 12px rgba(0,255,128,.4)}
+.stat-lbl{font-size:.6rem;color:rgba(0,255,128,.35);text-transform:uppercase;letter-spacing:.08em;margin-top:4px}
+
+/* Features */
+.features{display:flex;flex-direction:column;gap:10px}
+.feat{display:flex;align-items:center;gap:12px;font-size:.74rem;color:rgba(0,255,128,.6)}
+.feat-icon{width:30px;height:30px;border:1px solid rgba(0,255,128,.18);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:14px;background:rgba(0,255,128,.04);flex-shrink:0}
+
+/* AI Prediction badge */
+.ai-pred{
+  margin-top:28px;background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.2);
+  border-radius:4px;padding:14px 16px;
+}
+.ai-pred-hdr{font-size:.65rem;color:#00c8ff;text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.ai-pred-hdr::before{content:'◈';font-size:10px}
+.ai-pred-text{font-size:.78rem;color:rgba(0,200,255,.7);line-height:1.7}
+#pred-text{color:#00c8ff}
+
+/* ── RIGHT PANEL ── */
+.right{
+  width:420px;flex-shrink:0;display:flex;flex-direction:column;
+  justify-content:center;padding:52px 40px;
+  background:rgba(0,6,3,.7);
+}
+@media(max-width:800px){.right{width:100%;padding:36px 24px}}
+
+.form-title{font-family:'Orbitron',sans-serif;font-size:1.05rem;font-weight:700;color:#00ff80;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px;text-shadow:0 0 14px rgba(0,255,128,.3)}
+.form-sub{font-size:.68rem;color:rgba(0,255,128,.3);letter-spacing:.06em;margin-bottom:26px}
+
+/* Tabs */
+.tabs{display:flex;border:1px solid rgba(0,255,128,.18);border-radius:3px;overflow:hidden;margin-bottom:22px}
+.tab{flex:1;padding:10px;font-family:'Share Tech Mono',monospace;font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;cursor:pointer;background:transparent;border:none;color:rgba(0,255,128,.35);transition:all .2s}
+.tab.on{background:rgba(0,255,128,.1);color:#00ff80;box-shadow:inset 0 -2px 0 #00ff80}
+
+/* Fields */
+.field{margin-bottom:15px}
+.field label{display:flex;align-items:center;gap:6px;font-size:.66rem;color:rgba(0,255,128,.42);text-transform:uppercase;letter-spacing:.08em;margin-bottom:7px}
+.field input{
+  width:100%;background:rgba(0,18,9,.9);border:1px solid rgba(0,255,128,.16);
+  border-radius:3px;padding:12px 14px;color:#00ff80;font-size:.87rem;
+  outline:none;font-family:'Share Tech Mono',monospace;transition:all .22s;caret-color:#00ff80;
+}
+.field input::placeholder{color:rgba(0,255,128,.16)}
+.field input:focus{border-color:#00ff80;box-shadow:0 0 0 2px rgba(0,255,128,.07),0 0 14px rgba(0,255,128,.05)}
+
+/* Password strength */
+.pwd-bar{height:2px;background:rgba(0,255,128,.07);border-radius:1px;margin-top:5px;overflow:hidden}
+.pwd-fill{height:100%;width:0;border-radius:1px;transition:width .3s,background .3s}
+
+/* Error */
+.err{font-size:.7rem;color:#f43f5e;padding:8px 12px;background:rgba(244,63,94,.07);border:1px solid rgba(244,63,94,.18);border-radius:3px;margin-bottom:13px;display:none;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+
+/* Buttons */
+.btn-main{
+  width:100%;background:transparent;border:2px solid #00ff80;border-radius:3px;
+  padding:14px;font-family:'Orbitron',sans-serif;font-size:.8rem;font-weight:700;
+  color:#00ff80;cursor:pointer;text-transform:uppercase;letter-spacing:.1em;
+  transition:all .22s;position:relative;overflow:hidden;margin-bottom:11px;
+}
+.btn-main::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(0,255,128,.12);border-radius:50%;transform:translate(-50%,-50%);transition:width .4s,height .4s}
+.btn-main:hover::after{width:400px;height:400px}
+.btn-main:hover{background:rgba(0,255,128,.06);color:#fff;box-shadow:0 0 28px rgba(0,255,128,.3)}
+.btn-main:disabled{opacity:.3;cursor:not-allowed}
+.btn-main:not(:disabled){animation:ping 2.5s ease-out infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(0,255,128,.35)}70%{box-shadow:0 0 0 10px rgba(0,255,128,0)}100%{box-shadow:0 0 0 0 rgba(0,255,128,0)}}
+
+.divider{display:flex;align-items:center;gap:10px;margin:4px 0 11px}
+.div-line{flex:1;height:1px;background:rgba(0,255,128,.09)}
+.div-txt{font-size:.6rem;color:rgba(0,255,128,.18);letter-spacing:.08em}
+
+.btn-guest{
+  width:100%;background:transparent;border:1px solid rgba(0,255,128,.11);border-radius:3px;
+  padding:11px;font-family:'Share Tech Mono',monospace;font-size:.71rem;
+  color:rgba(0,255,128,.38);cursor:pointer;text-transform:uppercase;letter-spacing:.06em;transition:all .2s;
+}
+.btn-guest:hover{border-color:rgba(0,255,128,.28);color:rgba(0,255,128,.75);background:rgba(0,255,128,.03)}
+
+.footer-note{margin-top:18px;font-size:.6rem;color:rgba(0,255,128,.16);letter-spacing:.06em;text-align:center;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<div id="particles"></div>
+
+<div class="layout">
+
+  <!-- LEFT -->
+  <div class="left">
+    <div class="brand-title">LifeOS</div>
+    <div class="brand-sub">// DECISION INTELLIGENCE SYSTEM v2.0</div>
+
+    <div class="terminal">
+      <div class="term-bar">
+        <div class="td tr"></div><div class="td ty"></div><div class="td tg"></div>
+        <span>lifeos@core:~$</span>
+      </div>
+      <div class="tline">&gt; <b>booting</b> decision_engine...</div>
+      <div class="tline">&gt; <b>logic_agent</b> ........... [<b>READY</b>]</div>
+      <div class="tline">&gt; <b>finance_agent</b> ......... [<b>READY</b>]</div>
+      <div class="tline">&gt; <b>emotion_agent</b> ......... [<b>READY</b>]</div>
+      <div class="tline">&gt; <b>risk_agent</b> ............ [<b>READY</b>]</div>
+      <div class="tline cyan">&gt; <span id="tw"></span><span class="blink">_</span></div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="s1">0</div><div class="stat-lbl">Decisions</div></div>
+      <div class="stat"><div class="stat-val">4</div><div class="stat-lbl">AI Agents</div></div>
+      <div class="stat"><div class="stat-val">3yr</div><div class="stat-lbl">Simulation</div></div>
+    </div>
+
+    <div class="features">
+      <div class="feat"><div class="feat-icon">🧠</div>Multi-agent parallel debate</div>
+      <div class="feat"><div class="feat-icon">🔮</div>3-year outcome simulation</div>
+      <div class="feat"><div class="feat-icon">📊</div>Confidence + risk scoring</div>
+      <div class="feat"><div class="feat-icon">📋</div>Actionable 3-week plan</div>
+    </div>
+
+    <div class="ai-pred">
+      <div class="ai-pred-hdr">AI Prediction Engine</div>
+      <div class="ai-pred-text" id="pred-text">Analyzing decision patterns...</div>
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+    <div class="form-title">&gt; INITIALIZE SESSION</div>
+    <div class="form-sub">// AUTHENTICATE TO ACCESS DECISION CORE</div>
+
+    <div class="tabs">
+      <button class="tab on" id="tab-l" onclick="switchTab('login')">[ LOGIN ]</button>
+      <button class="tab" id="tab-s" onclick="switchTab('signup')">[ SIGN UP ]</button>
+    </div>
+
+    <div class="err" id="err"></div>
+
+    <div class="field">
+      <label>◈ Username</label>
+      <input type="text" id="uname" placeholder="enter_username" autocomplete="username" onkeydown="if(event.key==='Enter')auth()"/>
+    </div>
+    <div class="field">
+      <label>◉ Password</label>
+      <input type="password" id="pwd" placeholder="••••••••" autocomplete="current-password"
+        oninput="pwdStrength(this.value)" onkeydown="if(event.key==='Enter')auth()"/>
+      <div class="pwd-bar"><div class="pwd-fill" id="pbar"></div></div>
+    </div>
+    <div class="field" id="email-field" style="display:none">
+      <label>◎ Email <span style="opacity:.4">(optional)</span></label>
+      <input type="email" id="email" placeholder="user@domain.com" onkeydown="if(event.key==='Enter')auth()"/>
+    </div>
+
+    <button class="btn-main" id="auth-btn" data-mode="login" onclick="auth()">▶ &nbsp;LOGIN</button>
+
+    <div class="divider"><div class="div-line"></div><div class="div-txt">OR</div><div class="div-line"></div></div>
+
+    <button class="btn-guest" onclick="guest()">▷ &nbsp;CONTINUE AS GUEST EXPLORER</button>
+
+    <div class="footer-note">
+      // DATA STORED LOCALLY IN BROWSER<br>
+      // NO SERVER &nbsp;·&nbsp; NO TRACKING &nbsp;·&nbsp; NO ADS
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── PARTICLES ── */
+const pc = document.getElementById('particles');
+const cols = ['rgba(0,255,128,.7)','rgba(0,200,255,.6)','rgba(0,255,200,.5)'];
+for (let i = 0; i < 30; i++) {
+  const s = document.createElement('span');
+  const sz = Math.random() * 3 + 1;
+  s.style.cssText = `left:${Math.random()*100}%;width:${sz}px;height:${sz}px;
+    animation-duration:${6+Math.random()*12}s;animation-delay:${Math.random()*10}s;
+    background:${cols[i%3]};box-shadow:0 0 ${sz*3}px ${cols[0]}`;
+  pc.appendChild(s);
+}
+
+/* ── TYPEWRITER ── */
+const twLines = ['awaiting_authentication...','all_systems_nominal','decision_core_online','ready_for_analysis'];
+let tli = 0, tci = 0;
+const twEl = document.getElementById('tw');
+function type() {
+  if (tci < twLines[tli].length) {
+    twEl.textContent += twLines[tli][tci++];
+    setTimeout(type, 55 + Math.random()*35);
+  } else {
+    setTimeout(() => { twEl.textContent = ''; tci = 0; tli = (tli+1)%twLines.length; setTimeout(type,300); }, 2200);
+  }
+}
+type();
+
+/* ── COUNTER ── */
+const users = JSON.parse(localStorage.getItem('lifeos_users')||'{}');
+const target = Object.keys(users).length * 7 + 42;
+let n = 0;
+const s1 = document.getElementById('s1');
+const t = setInterval(() => { n = Math.min(n + 2, target); s1.textContent = n; if(n>=target) clearInterval(t); }, 30);
+
+/* ── AI PREDICTIONS ── */
+const preds = [
+  'Users who analyze career decisions report 3x more clarity within 7 days.',
+  'Finance decisions with multi-agent analysis show 68% better outcomes.',
+  'Emotion-aware decisions reduce regret by 54% over 2 years.',
+  'Risk-modeled choices have 40% higher execution rates.',
+  'Staged approaches outperform all-or-nothing decisions 71% of the time.',
+];
+let pi = 0;
+const predEl = document.getElementById('pred-text');
+function cyclePred() {
+  predEl.style.opacity = 0;
+  setTimeout(() => { predEl.textContent = preds[pi++ % preds.length]; predEl.style.opacity = 1; }, 400);
+}
+predEl.style.transition = 'opacity .4s';
+cyclePred();
+setInterval(cyclePred, 4000);
+
+/* ── TABS ── */
+function switchTab(mode) {
+  document.getElementById('tab-l').classList.toggle('on', mode==='login');
+  document.getElementById('tab-s').classList.toggle('on', mode==='signup');
+  document.getElementById('email-field').style.display = mode==='signup' ? 'block' : 'none';
+  document.getElementById('auth-btn').textContent = mode==='signup' ? '▶  CREATE ACCOUNT' : '▶  LOGIN';
+  document.getElementById('auth-btn').dataset.mode = mode;
+  document.getElementById('err').style.display = 'none';
+}
+
+/* ── PASSWORD STRENGTH ── */
+function pwdStrength(v) {
+  const bar = document.getElementById('pbar');
+  let s = 0;
+  if (v.length >= 4) s = 25;
+  if (v.length >= 8) s = 50;
+  if (/[A-Z]/.test(v) && /[0-9]/.test(v)) s = 75;
+  if (v.length >= 10 && /[^A-Za-z0-9]/.test(v)) s = 100;
+  bar.style.width = s + '%';
+  bar.style.background = {25:'#f43f5e',50:'#f59e0b',75:'#06b6d4',100:'#00ff80'}[s] || '#f43f5e';
+}
+
+/* ── AUTH ── */
+function showErr(msg) {
+  const e = document.getElementById('err');
+  e.textContent = '// ERROR: ' + msg;
+  e.style.display = 'block';
+}
+
+function auth() {
+  const mode = document.getElementById('auth-btn').dataset.mode || 'login';
+  const uname = document.getElementById('uname').value.trim();
+  const pwd = document.getElementById('pwd').value;
+  if (!uname) { showErr('Username required.'); return; }
+  if (pwd.length < 4) { showErr('Password must be at least 4 characters.'); return; }
+
+  const users = JSON.parse(localStorage.getItem('lifeos_users') || '{}');
+
+  if (mode === 'signup') {
+    if (users[uname]) { showErr('Username already exists. Try logging in.'); return; }
+    users[uname] = { password: pwd, created: Date.now() };
+    localStorage.setItem('lifeos_users', JSON.stringify(users));
+  } else {
+    if (!users[uname] || users[uname].password !== pwd) {
+      showErr('Invalid username or password.'); return;
+    }
+  }
+
+  localStorage.setItem('lifeos_user', JSON.stringify({ username: uname, loginAt: Date.now() }));
+  window.location.href = 'index.html';
+}
+
+function guest() {
+  localStorage.setItem('lifeos_user', JSON.stringify({ username: 'Guest', loginAt: Date.now() }));
+  window.location.href = 'index.html';
+}
+</script>
+</body>
+</html>
